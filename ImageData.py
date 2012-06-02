@@ -40,5 +40,5 @@ class ImageData:
         for name, skin in charskins:
             self.loadTexture(name+"_"+skin,"images/characters/" + name + "/" + skin + "/" + name + "_" + skin + ".png", -1)
             for y in range(0,4):
-                for x in range(0,3):
+                for x in range(0,4):
                     self.spriteRects[name+"_"+skin].append(pygame.rect.Rect(x*32,y*64,32,64))

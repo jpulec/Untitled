@@ -39,8 +39,8 @@ class DisplayInfo:
 
     
     def createScreen(self):
-        #self.iconSurface = pygame.image.load("images/sword.gif")
-        #pygame.display.set_icon(self.iconSurface)
+        self.iconSurface = pygame.image.load("images/sword.gif")
+        pygame.display.set_icon(self.iconSurface)
         
         self.screen = pygame.display.set_mode((self.screenwidth,
                                                 self.screenheight),
