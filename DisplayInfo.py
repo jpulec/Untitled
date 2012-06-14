@@ -50,11 +50,3 @@ class DisplayInfo:
         pygame.display.set_caption("RPG!")
         self.checkWindowSize()
         self.displayInitilized = 1
-
-    def getScreen(self):
-        return self.screen
-
-    def getWindow(self):
-        return self.window
-        
-        

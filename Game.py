@@ -47,7 +47,7 @@ class Game:
 
     def gameDraw(self):
         if self.debug:
-            self.display.getScreen().blit(self.font.render(str(self.timer.get_fps()), 0, (255,255,255)), (24,24))
+            self.display.screen.blit(self.font.render(str(self.timer.get_fps()), 0, (255,255,255)), (24,24))
 
     def initWorld(self):
         self.overworld = Overworld.Overworld(self.display)

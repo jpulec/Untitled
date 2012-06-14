@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="29" height="30" tilewidth="16" tileheight="16">
- <tileset firstgid="1" name="Bak_Inside" tilewidth="16" tileheight="16">
-  <image source="../../../../Downloads/Bank_Inside.png" trans="ff638c" width="480" height="256"/>
-  <tile id="321">
-   <properties>
-    <property name="Wine" value=""/>
-   </properties>
-  </tile>
- </tileset>
+ <tileset firstgid="1" source="../tilesets/Bank_Inside.tsx"/>
  <tileset firstgid="481" name="Meta" tilewidth="16" tileheight="16">
   <image source="../../../../Downloads/Meta.png" width="32" height="32"/>
   <tile id="0">
@@ -38,8 +31,24 @@
   </data>
  </layer>
  <objectgroup name="Object Layer 1" width="29" height="30">
-  <object name="GameStart" x="176" y="384" width="16" height="16"/>
+  <object name="GameStart" x="176" y="384" width="16" height="16">
+   <properties>
+    <property name="gamestart" value=""/>
+   </properties>
+  </object>
   <object name="Portal" x="32" y="160" width="16" height="32"/>
+  <object name="Portal" x="32" y="160" width="16" height="32">
+   <properties>
+    <property name="Portal" value="Bank_Basement"/>
+   </properties>
+  </object>
+  <object name="Portal" x="32" y="160" width="16" height="32">
+   <properties>
+    <property name="portal" value="Bank_Basement"/>
+    <property name="startx" value="2"/>
+    <property name="starty" value="11"/>
+   </properties>
+  </object>
  </objectgroup>
  <layer name="Meta" width="29" height="30">
   <properties>
