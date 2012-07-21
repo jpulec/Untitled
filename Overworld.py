@@ -1,209 +1,217 @@
 import pygame
-from pytmx import tmxloader
+import tiledtmxloader
 import PlayerData
-import WindowContext
 from pygame.locals import *
+from Constants import DISPLAY, SCREEN_WIDTH, SCREEN_HEIGHT, TILE_SIZE, IM
 
-class Overworld(WindowContext.WindowContext):
-    def __init__(self, display):
-        WindowContext.WindowContext.__init__(self)
-        self.display = display
+class Overworld:
+    def __init__(self):
         self.map = None
+        self.renderer = None
+        self.resources = None
+        self.sprite_layers = None
+        self.object_layers = None
         self.player = None
-        self.xOffset = 0
-        self.yOffset = 0
-        self.xStart = 0
-        self.yStart = 0
-        self.yStartOff = 0
-        self.xStartOff = 0
-        self.collide = []
-        self.nextTile = [0,0]
+        self.input = False
+        self.cam_world_pos_x = 0
+        self.cam_world_pos_y = 0
 
-    def loadMap(self, mapName):
-        self.map = tmxloader.load_pygame(mapName, pixelalpha = False)
-        for objgrp in self.map.objectgroups:
-            for obj in objgrp.objects:
-                if hasattr(obj, "gamestart"):
-                    print str(obj.x*2 - self.display.screenwidth / 2),
-                    print str(obj.y*2 - self.display.screenheight/ 2)
-                    self.xStartOff = (obj.x*2 - self.display.screenwidth / 2)
-                    self.yStartOff = (obj.y*2 - self.display.screenheight/ 2)
-                    self.xStart = obj.x / 16
-                    self.yStart = obj.y / 16
+    def load_map(self, mapName):
+        self.map = tiledtmxloader.tmxreader.TileMapParser().parse_decode(mapName)
+
+        self.resources = tiledtmxloader.helperspygame.ResourceLoaderPygame()
+        self.resources.load(self.map)
+
+        self.renderer = tiledtmxloader.helperspygame.RendererPygame()
+
+        # cam_offset is for scrolling
+        cam_world_pos_x = 0
+        cam_world_pos_y = 0
+
+        # set initial cam position and size
+        self.renderer.set_camera_position_and_size(self.cam_world_pos_x, self.cam_world_pos_y, SCREEN_WIDTH, SCREEN_HEIGHT, "topleft")
+
+        # retrieve the layers
+        self.sprite_layers = [layer for layer in tiledtmxloader.helperspygame.get_layers_from_map(self.resources) if not layer.is_object_group]
+        self.object_layers = [layer for layer in tiledtmxloader.helperspygame.get_layers_from_map(self.resources) if layer.is_object_group]
+
+        self.player = Avatar("Miles")
+        self.player.current_skin = "Miles_regular"
+        self.player.draw()
+        self.sprite_layers[1].add_sprite(self.player.sprite)
 
     def draw(self):
-        self.drawWorld()
+        self.draw_world()
 
     def update(self):
-        self.updateWorld()
+        self.update_world()
 
-    def handleEvents(self, e):
+    '''def handle_events(self, e):
         if e.key == K_ESCAPE:
             #TODO: implement whatever behavior I want here
             return
         #TODO: this movement needs some work, should really fix collisions and such
-        if e.key == K_LEFT: 
-            if self.xOffset % 32 == 0 and self.yOffset % 32  == 0:
-                if self.mapTileNull(-1, 0):
-                    print "NULL"
-                    self.nextTile = [-1,0]
-                else:
-                    if not self.mapTileCollidable(-1, 0):
-                        print "NOTCOLLIDE"
-                        self.nextTile = [-1,0]
-                    else:
-                        print "COLLIDE"
-                        self.nextTile[0] = 0
+        if e.key == K_LEFT:
+            if self.cam_world_pos_x % 32 == 0 and self.cam_world_pos_y % 32 == 0:
                 self.player.facing = 12
 
         elif e.key == K_RIGHT:
-            if self.xOffset % 32 == 0 and self.yOffset % 32  == 0:
-                if self.mapTileNull(1, 0):
-                    self.nextTile = [1,0]
-                else:
-                    if not self.mapTileCollidable(1, 0):
-                        self.nextTile = [1,0]
-                    else:
-                        self.nextTile[0] = 0
+            if self.cam_world_pos_x % 32 == 0 and self.cam_world_pos_y % 32 == 0:
                 self.player.facing = 4
                
         elif e.key == K_UP:
-            if self.xOffset % 32 == 0 and self.yOffset % 32  == 0:
-                if self.mapTileNull(0, -1):
-                    self.nextTile = [0,-1]
-                else:
-                    if not self.mapTileCollidable(0, -1):
-                        self.nextTile = [0,-1]
-                    else:
-                        self.nextTile[1] = 0
+            if self.cam_world_pos_x % 32 == 0 and self.cam_world_pos_y % 32 == 0:
                 self.player.facing = 0
 
         elif e.key == K_DOWN:
-            if self.xOffset % 32 == 0 and self.yOffset % 32  == 0:
-                if self.mapTileNull(0, 1):
-                    self.nextTile = [0,1]
-                else:
-                    if not self.mapTileCollidable(0, 1):
-                        self.nextTile = [0, 1]
-                    else:
-                        self.nextTile[1] = 0
+            if self.cam_world_pos_x % 32 == 0 and self.cam_world_pos_y % 32 == 0:
                 self.player.facing = 8
 
         elif e.key == K_RETURN:
-            if self.xOffset % 32 == 0 and self.yOffset % 32  == 0:
-                if self.player.facing == 0:
-                    if not self.mapTileNull(0, -1):
-                        if self.mapTileCollectible(0, -1):
-                            print "ADD"
-                elif self.player.facing == 4:
-                    if not self.mapTileNull(1, 0):
-                        if self.mapTileCollectible(1, 0):
-                            print "ADD"
+            pass
+        self.cam_world_pos_x, self.cam_world_pos_y = self.check_collision(self.player.facing, self.sprite_layers[3])'''
 
-                elif self.player.facing ==8:
-                    if not self.mapTileNull(0, 1):
-                        if self.mapTileCollectible(0, 1):
-                            print "ADD"
+    def handle_events(self, e):
+        if e.key == K_ESCAPE:
+            #TODO: implement whatever behavior I want here
+            return
+        #TODO: this movement needs some work, should really fix collisions and such
+        if e.key == K_LEFT:
+            if self.cam_world_pos_x % 32 == 0 and self.cam_world_pos_y % 32 == 0:
+                if not self.player.facing == 14:
+                    self.player.facing = 12
+                self.input = True
 
-                elif self.player.facing == 12:
-                    if not self.mapTileNull(-1, 0):
-                        if self.mapTileCollectible(-1, 0):
-                            print "ADD"
+        elif e.key == K_RIGHT:
+            if self.cam_world_pos_x % 32 == 0 and self.cam_world_pos_y % 32 == 0:
+                if not self.player.facing == 6:
+                    self.player.facing = 4
+                self.input = True
+               
+        elif e.key == K_UP:
+            if self.cam_world_pos_x % 32 == 0 and self.cam_world_pos_y % 32 == 0:
+                if not self.player.facing == 2:
+                    self.player.facing = 0
+                self.input = True
 
-    def updateWorld(self):
-        if self.nextTile[0] is not 0 or self.xOffset % 32 is not 0:
-            if self.player.facing % 4 == 3 and self.xOffset % 32 == 0:
-                self.player.facing -= 3
-                self.nextTile[0] = 0
-            elif self.player.facing % 4 == 0 and self.xOffset % 32 == 0:
-                self.xOffset += 4*self.nextTile[0]
-            
+        elif e.key == K_DOWN:
+            if self.cam_world_pos_x % 32 == 0 and self.cam_world_pos_y % 32 == 0:
+                if not self.player.facing == 10:
+                    self.player.facing = 8
+                self.input = True
 
-            elif self.xOffset % 8 == 0:
-                self.player.facing += 1
-                self.xOffset += 4*self.nextTile[0]
-            
-            elif self.xOffset % 4 == 0:
-                self.xOffset += 4*self.nextTile[0]
-            
-            
-        elif self.nextTile[1] is not 0 or self.yOffset % 32 is not 0:
-            if self.player.facing % 4 == 0 and self.yOffset % 32 == 0:
-                self.yOffset += 4*self.nextTile[1]
-            elif self.player.facing % 4 == 3 and self.yOffset % 32 == 0:
-                self.player.facing -= 3
-                self.nextTile[1] = 0
+        elif e.key == K_RETURN:
+            pass
 
-            elif self.yOffset % 8 == 0:
-                self.player.facing += 1
-                self.yOffset += 4*self.nextTile[1]
-            
-            elif self.yOffset % 4 == 0:
-                self.yOffset += 4*self.nextTile[1]
+    def update_world(self):
+        if self.input:
+            self.check_collision(self.player.facing, self.sprite_layers[3])
+            self.input = False
+        elif self.cam_world_pos_x % 32 is not 0:
+            if self.player.facing > 11:
+                if self.cam_world_pos_x % 16 == 0:
+                    self.player.facing += 1
+                self.player.rect.move_ip(-2, 0)
+                self.player.imrect.move_ip(-2, 0)
+                self.cam_world_pos_x -= 2
+            elif self.player.facing > 3:
+                if self.cam_world_pos_x % 16 == 0:
+                    self.player.facing += 1
+                self.player.rect.move_ip(2, 0)
+                self.player.imrect.move_ip(2, 0)
+                self.cam_world_pos_x += 2
 
-    def mapTileNull(self, x, y):
-        return self.map.getTileProperties((self.xOffset / 32 + x, self.yOffset / 32 + y,2)) is None
+        elif self.cam_world_pos_y % 32 is not 0:
+            if self.player.facing < 4:
+                if self.cam_world_pos_y % 16 == 0:
+                    self.player.facing += 1
+                self.player.rect.move_ip(0, -2)
+                self.player.imrect.move_ip(0, -2)
+                self.cam_world_pos_y -= 2
+            elif self.player.facing > 7:
+                if self.cam_world_pos_y % 16 == 0:
+                    self.player.facing += 1
+                self.player.rect.move_ip(0, 2)
+                self.player.imrect.move_ip(0, 2)
+                self.cam_world_pos_y += 2
+        elif self.player.facing % 4 == 1:
+            self.player.facing +=1
+        elif self.player.facing % 4 == 3:
+            self.player.facing -= 3
 
-    def mapTileCollidable(self, x, y):
-        print str(self.xOffset / 32 + x),
-        print str(self.yOffset / 32 + y)
-        print str((self.xOffset - self.xStart) / 32 + x),
-        print str((self.yOffset - self.yStart)/ 32 + y)
-        gid = self.map.getTileGID((self.xOffset) / 32 + x + self.xStart, (self.yOffset)/ 32 + y + self.yStart,2)
-        if gid:
-            return self.map.getTilePropertiesByGID(gid).has_key("collidable")
+    def check_collision(self, facing, coll_layer):
+        if facing %2 != 0:
+            return
+        '''if facing % 4 != 0 or not self.cam_world_pos_x % 32 == 0 or not self.cam_world_pos_y % 32 == 0:
+            return self.cam_world_pos_x, self.cam_world_pos_y'''
 
-    def mapTileCollectible(self, x, y):
-        gid = self.map.getTileGID(self.xOffset / 32 + x, self.yOffset / 32 + y,2)
-        if gid:
-            tiles = self.map.getLayerData(2)
-            itemgid = self.map.getTileGID(self.xOffset / 32 + x, self.yOffset / 32 + y,1)
-            if itemgid:
-                contents = self.map.getTilePropertiesByGID(itemgid)
-                print str(self.map.objectgroups[0].objects[0])
-                print "GOT ITEM" + str(contents)
+        # find the tile location of the hero
+        tile_x = int((self.player.rect.left) / coll_layer.tilewidth)
+        tile_y = int((self.player.rect.top) / coll_layer.tileheight)
 
-    def mapPortal(self, x, y):
-        for objgrp in self.map.objectgroups:
-            for obj in objgrp.objects:
-                if obj.has_key("portal"):
-                    pass
+        step_x = 0
+        step_y = 0
 
-    def getGameStart(self):
-        return (self.map.objectgroups[0].objects[0].x*2, self.map.objectgroups[0].objects[0].y*2)
-        
+        if facing == 4 or facing == 6:
+            step_x = 2
+            step_y = 0
+        elif facing == 0 or facing == 2:
+            step_x = 0
+            step_y = -2
+        elif facing == 8 or facing == 10:
+            step_x = 0
+            step_y = 2
+        elif facing == 12 or facing == 14:
+            step_x = -2
+            step_y = 0
 
-    def drawWorld(self):
-        self.display.screen.fill((0, 0, 0))
-        self.drawMap()
+        # find the tiles around the hero and extract their rects for collision
+        tile_rects = []
+        for diry in (-1, 0 , 1):
+            for dirx in (-1, 0, 1):
+                if coll_layer.content2D[tile_y + diry][tile_x + dirx] is not None:
+                    tile_rects.append(coll_layer.content2D[tile_y + diry][tile_x + dirx].rect)
+
+        if self.player.rect.move(step_x, 0).collidelist(tile_rects) > -1:
+            step_x = 0
+
+        if self.player.rect.move(0, step_y).collidelist(tile_rects) > -1:
+            step_y = 0
+
+        self.player.rect.move_ip(step_x, step_y)
+        self.player.imrect.move_ip(step_x, step_y)
+        self.cam_world_pos_x += step_x
+        self.cam_world_pos_y += step_y
+
+    def draw_world(self):
+        DISPLAY.screen.fill((0, 0, 0))
+        self.sprite_layers[1].remove_sprite(self.player.sprite)
         self.player.draw()
+        #print str(self.cam_world_pos_x)
+        self.sprite_layers[1].add_sprite(self.player.sprite)
+        self.draw_map()
 
-    def drawMap(self):
-        #TODO: make this way more efficient
-        tw = self.map.tilewidth * 2
-        th = self.map.tileheight *2
-        gt = self.map.getTileImage
-      
-        for l in xrange(0, len(self.map.tilelayers)):
-            if hasattr(self.map.layers[l], "meta"):
-                continue
-            for y in xrange(0, self.map.height):
-                for x in xrange(0, self.map.width):
-                    tile = gt(x, y, l)
-                    if tile: self.display.screen.blit(pygame.transform.scale2x(tile), (x*tw - self.xOffset -self.xStart * 32, y*th - self.yOffset - self.yStart*32))
+    def draw_map(self):
+        # adjust camera to position according to the keypresses
+        self.renderer.set_camera_position(self.cam_world_pos_x, self.cam_world_pos_y, "topleft")
+        # render the map
+        for sprite_layer in self.sprite_layers:
+            self.renderer.render_layer(DISPLAY.screen, sprite_layer)
 
 
 class Avatar:
-    def __init__(self, name, display, im):
-        self.display = display
-        self.im = im
-        self.rect = pygame.Rect(display.screenwidth / 2, display.screenheight / 2, 32, 32)
+    def __init__(self, name):
+        self.imrect = pygame.Rect(DISPLAY.screen_width / 2 - 16, DISPLAY.screen_height / 2 - 16, TILE_SIZE, TILE_SIZE * 2)
+        self.rect = pygame.Rect(DISPLAY.screen_width / 2 - 16, DISPLAY.screen_height / 2 - 16 + 32, TILE_SIZE, TILE_SIZE)
         self.facing = 0
-        self.currentSkin = None
-
+        self.current_skin = None
+        self.image = None
+        self.sprite = None
+        
 
     def draw(self):
-        playerSurface = self.im.textures[self.currentSkin][0]
-        playerSprite = self.im.spriteRects[self.currentSkin][self.facing + 1]
-        self.display.screen.blit(playerSurface, self.rect, playerSprite)
+        src_rect = IM.sprite_rects[self.current_skin][self.facing + 1]
+        self.image = IM.textures[self.current_skin][0]
+        self.sprite = tiledtmxloader.helperspygame.SpriteLayer.Sprite(self.image, self.imrect, src_rect)
+
 

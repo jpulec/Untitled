@@ -1,61 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="29" height="30" tilewidth="16" tileheight="16">
- <tileset firstgid="1" source="../tilesets/Bank_Inside.tsx"/>
- <tileset firstgid="481" name="Meta" tilewidth="16" tileheight="16">
-  <image source="../../../../Downloads/Meta.png" width="32" height="32"/>
+<map version="1.0" orientation="orthogonal" width="29" height="30" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="Meta" tilewidth="32" tileheight="32">
+  <image source="../tilesets/Meta.png" width="64" height="64"/>
   <tile id="0">
    <properties>
-    <property name="collidable" value=""/>
-   </properties>
-  </tile>
-  <tile id="1">
-   <properties>
-    <property name="collectible" value=""/>
-   </properties>
-  </tile>
-  <tile id="2">
-   <properties>
-    <property name="collectible" value=""/>
-    <property name="collidable" value=""/>
+    <property name="collision" value=""/>
    </properties>
   </tile>
  </tileset>
- <layer name="Background" width="29" height="30">
+ <tileset firstgid="5" name="Bank_Inside" tilewidth="32" tileheight="32">
+  <image source="../tilesets/Bank_Inside2.png" width="960" height="512"/>
+ </tileset>
+ <layer name="Ground" width="29" height="30">
   <data encoding="base64" compression="zlib">
-   eJwzY2RgMAdiMzrSIUAcSmcaZv8hBlQ8WP35gAEVI8ujy6H7swiIi4G4hMbsIiR/TgDiiUA8icbsCUj+XAfE64F4A43Z65D8eQaIzwLxORqzz4zG52h8UjE+B6q8HSn1yqg/B78/PUeIP0dKfI76c9Sfw9WfAN09SLI=
+   eJxjZGRg6GRgYOgiER9jJF1PNxAzA/XJA/FyIHsFHswKVMPGiCr2hBG/Hmx4JRArQu08CnI3HqwMVKPCiODzAtl8QMzPiF8fOj6OZOdjkLuR8B6g2F5GBN8RyHZC4msD2TpArMuIqo8QfopkZxkQlwNxBZR9C4hvYxGHsT2B2AuIvdHErYFm2jAg1G8GsrcwoKqB2TkFiKcC8TQK2ZFA86MYEOIXgexLDKhqYHZuArkJiLfQgQ2z8wLITUB8iQ5sXPFJSza145MYNnJ8tgxAfC4agPg8QOf4pARcIlE/zE47CvB/BtLUw+yMoQDLkqgeZuc/Boh76UHD7JSBupce9ED6kxKA7A9iAMxOHyD2BWI/MtjI/iBG/UiLz1F/jvqTEn/aMlJWr5CK7YE4mpGyeoVUHAvEADoYqDg=
   </data>
  </layer>
- <layer name="Foreground" width="29" height="30" opacity="0.94">
+ <layer name="Fringe" width="29" height="30">
   <data encoding="base64" compression="zlib">
-   eJzt1TlOAzEUxnG7BE4AITVL6FnSIYWth0ABUkACeuhAAgrgDOwFcAb2gnAGIF3CQRD5W2DFmsb2SzQUyZN+8vM2XzOa+VZKHeLIo6z9Z3yO8YMMz7pmvPGoaf8Zn1tk9W/mK/0J4ynOcI6yauhi3o2exHqsNyezSn/HeI8HPKKmGgaYD2Iosb7MfAW99H3Kv/flZJp6Z/zAJyp/a7YKzKcwnVjfYb6LUfoxFbbnZjZT81gI3GtV5ha2A/dalRlT/5lZwirWUsi3mXvYx0GKmRe4xFWKmU94xkuKmf1CpmLv2MwJIVOxd2zmopCp2Dvt9k0YRg4jgt6tkPM2cwazmBP0bpn1Sc95m7mODWwKerdCzrfbO9TJ7GQ2kzmu5f8ViTyKWv5fkVhCHecYkek=
+   eJxjYBiZYC4jA8M8IJ4PxAsY6WPnbiR79hFpZyJQXRIQywLZckjiU4F4GhH6byLZcwfKjgfSCXjsrwfKNdApTAYDKAfiCiT+eyD+MEBuGSwgFRr/6XRMB81Qu1rpaOdCqF2L6WjnfqhdB0dQHhsFo2AU4AZZwLIgG4hzGElnk2rOKBgFo2BwAwCKUhss
   </data>
  </layer>
- <objectgroup name="Object Layer 1" width="29" height="30">
-  <object name="GameStart" x="176" y="384" width="16" height="16">
+ <layer name="Over" width="29" height="30">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUjIJRMJyBAiP5mFT9o2AUUAvoAdOTPhAbMJLOJtWcUTAKRsEoGAwAAJ84B9s=
+  </data>
+ </layer>
+ <layer name="Collision" width="29" height="30" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJxjZGBgYBzFwwojA2xy6OpwyeNSh818aoGRYicxYCDtRE4Lw91OeoXzSLaTnDJsIMpNSstbWoNRO2lvJ6VpiJrm0dJOeoJRO0ftpJadIwEDALKSAWc=
+  </data>
+ </layer>
+ <objectgroup name="Objects" width="29" height="30">
+  <object name="GameStart" x="352" y="768" width="32" height="32">
    <properties>
     <property name="gamestart" value=""/>
    </properties>
   </object>
-  <object name="Portal" x="32" y="160" width="16" height="32"/>
-  <object name="Portal" x="32" y="160" width="16" height="32">
+  <object name="Portal" x="64" y="320" width="32" height="32">
    <properties>
-    <property name="Portal" value="Bank_Basement"/>
-   </properties>
-  </object>
-  <object name="Portal" x="32" y="160" width="16" height="32">
-   <properties>
-    <property name="portal" value="Bank_Basement"/>
-    <property name="startx" value="2"/>
-    <property name="starty" value="11"/>
+    <property name="portal" value=""/>
    </properties>
   </object>
  </objectgroup>
- <layer name="Meta" width="29" height="30">
-  <properties>
-   <property name="meta" value=""/>
-  </properties>
-  <data encoding="base64" compression="zlib">
-   eJx7yMjA8HAUDysMAtjEYIAYcWLlsKklB+AzZzjZSQoYSDuR09GoncPDTmqVJQNRfg1mO+kJBrpMoEYY0TNOke18TGZ6IIWNbicxekdSGhq1c9ROSu0cCRgA+vRcyA==
-  </data>
- </layer>
 </map>

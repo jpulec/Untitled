@@ -1,7 +1,5 @@
-
 import Creature
 import pygame
-
 
 class PlayerData(Creature.Creature):
     def __init__(self, name):
@@ -16,7 +14,7 @@ class PlayerData(Creature.Creature):
         self.alive = True
 
 
-    def drawOnMap(self, imageManager, screen):
+    def drawOnMap(self):
         playerSurface =  imageManager.textures[self.currentSkin][0]
         playerSprite = imageManager.spriteRects[self.currentSkin][self.facing + 1]
         screen.blit(playerSurface, self.rect, playerSprite)

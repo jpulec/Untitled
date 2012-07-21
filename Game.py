@@ -4,77 +4,67 @@ import ImageData
 import PlayerData
 import Overworld
 import Party
-from pytmx import tmxloader
-pygame.init()
 from pygame.locals import *
-   
- 
-
+from Constants import *
 
 class Game:
     def __init__(self):
-        self.timer = pygame.time.Clock()
-        self.display = DisplayInfo.DisplayInfo()
-        self.textureManager = ImageData.ImageData()
         self.party = Party.Party()
         pygame.font.init()
         pygame.key.set_repeat(75, 75)
-        self.initDisplay()
+        self.init_display()
         self.font = pygame.font.Font(None, 24)
-        self.windowContext = None
+        self.window_context = None
         self.overworld = None
         self.debug = False
-        self.quitFlag = False
+        self.quit_flag = False
         
        
 
-    def initDisplay(self):
-        self.display.createScreen()       
-        self.display.screen.fill((0, 0, 0))
+    def init_display(self):
+        DISPLAY.create_screen()       
+        DISPLAY.screen.fill((0, 0, 0))
     
 
-    def mainloop(self):
-        self.initWorld()
-        while(not self.quitFlag):
+    def main_loop(self):
+        self.init_world()
+        while(not self.quit_flag):
             for e in pygame.event.get():
-                self.handleEvents(e)
-            self.windowContext.update()
-            self.windowContext.draw()
-            self.gameDraw()         #really only for debug stuff, since it will draw over the top of other contexts
+                self.handle_events(e)
+            self.window_context.update()
+            self.window_context.draw()
+            self.game_draw()         #really only for debug stuff, since it will draw over the top of other contexts
             pygame.display.flip()
-            self.timer.tick(60)
+            TIMER.tick(60)
         #TODO:quit cleanup code here
 
-    def gameDraw(self):
+    def game_draw(self):
         if self.debug:
-            self.display.screen.blit(self.font.render(str(self.timer.get_fps()), 0, (255,255,255)), (24,24))
+            DISPLAY.screen.blit(self.font.render(str(TIMER.get_fps()), 0, (255,255,255)), (24,24))
 
-    def initWorld(self):
-        self.overworld = Overworld.Overworld(self.display)
-        self.windowContext = self.overworld
-        self.overworld.loadMap("maps/Bank_Inside.tmx")
-        self.overworld.player = Overworld.Avatar("Miles", self.display, self.textureManager)
-        self.overworld.player.currentSkin = "Miles_regular"
-        self.overworld.player.facing = 7
+    def init_world(self):
+        self.overworld = Overworld.Overworld()
+        self.window_context = self.overworld
+        self.overworld.load_map("maps/Bank_Inside.tmx")
         self.party.team["Miles"] = PlayerData.PlayerData("Miles_regular")
 
 
-    def handleEvents(self, e):
+    def handle_events(self, e):
         if e.type == QUIT:
-            self.quitFlag = True
+            self.quit_flag = True
             return
         if e.type == KEYDOWN:
             self.mods =  pygame.key.get_mods()       
             if e.key == K_RETURN and (self.mods & KMOD_CTRL):   #pretty sure precise pangolin (12.04) screwed this up with Alt mapped to HUD, so now its CTRL
-                self.display.isFullscreen = (self.display.isFullscreen + 1) % 2   
-                self.display.createScreen()
+                DISPLAY.is_fullscreen = (DISPLAY.is_fullscreen + 1) % 2   
+                DISPLAY.create_screen()
             elif e.key == K_F1:    #debug stuff...at least fps
                 self.debug = not self.debug
             else:
-                self.windowContext.handleEvents(e)
+                self.window_context.handle_events(e)
             
 
 
 if __name__ == "__main__":                                                   
     game = Game()
-    game.mainloop()
+    game.main_loop()
