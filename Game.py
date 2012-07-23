@@ -4,6 +4,7 @@ import ImageData
 import PlayerData
 import Overworld
 import Party
+import Transition
 from pygame.locals import *
 from Constants import *
 
@@ -45,7 +46,7 @@ class Game:
     def init_world(self):
         self.overworld = Overworld.Overworld()
         self.window_context = self.overworld
-        self.overworld.load_map("maps/Bank_Inside.tmx")
+        self.overworld.load_map("maps/Bank_Inside.tmx", 0, 0)
         self.party.team["Miles"] = PlayerData.PlayerData("Miles_regular")
 
 
@@ -53,6 +54,9 @@ class Game:
         if e.type == QUIT:
             self.quit_flag = True
             return
+        if e.type == TRANSITION:
+            print "TRANSITION"
+            self.window_context = Transition.Transition(e.dict)
         if e.type == KEYDOWN:
             self.mods =  pygame.key.get_mods()       
             if e.key == K_RETURN and (self.mods & KMOD_CTRL):   #pretty sure precise pangolin (12.04) screwed this up with Alt mapped to HUD, so now its CTRL

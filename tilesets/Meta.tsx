@@ -1,20 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset name="Meta" tilewidth="16" tileheight="16">
- <image source="../../../../Downloads/Meta.png" width="32" height="32"/>
+<tileset name="Meta" tilewidth="32" tileheight="32">
+ <image source="Meta.png" width="64" height="64"/>
  <tile id="0">
   <properties>
-   <property name="collidable" value=""/>
-  </properties>
- </tile>
- <tile id="1">
-  <properties>
-   <property name="collectible" value=""/>
-  </properties>
- </tile>
- <tile id="2">
-  <properties>
-   <property name="collectible" value=""/>
-   <property name="collidable" value=""/>
+   <property name="collision" value=""/>
   </properties>
  </tile>
 </tileset>

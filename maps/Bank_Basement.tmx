@@ -1,48 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="29" height="30" tilewidth="16" tileheight="16">
- <tileset firstgid="1" name="Meta" tilewidth="16" tileheight="16">
-  <image source="../../../../Downloads/Meta.png" width="32" height="32"/>
-  <tile id="0">
-   <properties>
-    <property name="collidable" value=""/>
-   </properties>
-  </tile>
-  <tile id="1">
-   <properties>
-    <property name="collectible" value=""/>
-   </properties>
-  </tile>
-  <tile id="2">
-   <properties>
-    <property name="collectible" value=""/>
-    <property name="collidable" value=""/>
-   </properties>
-  </tile>
- </tileset>
- <tileset firstgid="5" source="../tilesets/Bank_Inside.tsx"/>
- <layer name="Background" width="29" height="30">
+<map version="1.0" orientation="orthogonal" width="29" height="30" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" source="../tilesets/Bank_Inside.tsx"/>
+ <tileset firstgid="481" source="../tilesets/Meta.tsx"/>
+ <layer name="Ground" width="29" height="30">
   <data encoding="base64" compression="zlib">
-   eJzt0bENgmAYhOGPOAhxEGUQdA11BaAFVkBbZQW1FVdQ9+At/BMmuOqKJ7nuijfLIqqIqAUarPjLMbDPAhes/5939kPgufj8sL8Cv8XnESccBDt9dujRCnb6vGHEVbDT54Q3XoLtnu7pnu7pnu7pnu7pnhEbbIUKlNgJ7TEDK8IHow==
+   eJy9lT0vBEEYx2d8BHRyIdkvgA6hRoEO4VOgodKgRbxVGnQ48VZp0OHceak06OjRCb+Jm2SNudtZuzuT/LL/m+fZezbPP8/MpxBiBmY9MAdf0CCF2OC5GYEkr0baY5PsT1WIhdmCnPypeYo+i6CRvCZpj62yv2bEtmHHyDsP1XxEP0XQSV6XtMeO2D82YhdwaeQ9h2qOwThMVNEjMFoh5w7ujf0X/v9V/M3XNedhARY9aF3zje95hw/Y5Xce9mQ2WteshTqohysowHVGWtdshhZodfQ2idY1+6AfBjz6qfo9naGHNj9Vv9cz9NDmp+r3iYMnwjJvWi/BMqxY3u2GHuiVv+fzwcGToErOPhzAYQw/k3pVghu4jeGn2Xu10vJQLZufpj9FR69cdCDjn7euXsWdz3y5B0m8ijufhXI/fc5n0rPU1fM0708f86lW2vMZpYsp+qmWj/sz3O8gBW99nbf/nU9f92cbtHukAwZhyCPD8A1KLPQP
   </data>
  </layer>
- <layer name="Foreground" width="29" height="30">
+ <layer name="Fringe" width="29" height="30">
   <data encoding="base64" compression="zlib">
-   eJxjYBgcYC8eMVZGBgY2RsLqCImRApSB9qkwEla3AYg3UmgXCKQA7XIEYidGCBsfOAfE56lgZxPQnnggTmCEsPGBN0D8Fo98LlB/HhDnExFm1ALdQLt6gLiXjnauBNq1CohX09HO40C7TgDxSTramQq0Kw2I0+loZzPQrhYgbqWjnQuBdi0C4sU0slMPaK4+EBsgmb8fyD4AxAdpZKcP0FxfIPajYzhmAe3KBuIcOto5WADnAPhZnUp2zgCaMxOIZ+EwjxZ+2wY0czsQ78BhNql+4wKq5yag5wpQ/ioQXyPDP9jCSAPI1qRhvBMKI0KAgxESd7Cw4SHCHGLDCFd4qzFC4g4WNlpY1JCbnigJb2zpSXUA8qwz0E4XIHYdBGUkMXmG2oDWeWY4AQDe9C2w
+   eJxjYBgFo2AUjIKBB/WMELqRkX52zoXaNZ8EO1WAalUpcONuqN69dPTnTahdt2lkZxrQ3HQgzqCjn0bB0ADY8guleWgUDC9gD0wLDkDsOMTShBLQvWpDzM2jYPADAFAcCJc=
   </data>
  </layer>
- <objectgroup name="Object Layer 1" width="29" height="30">
-  <object x="48" y="160" height="16"/>
-  <object name="Portal" x="32" y="160" width="16" height="32">
+ <layer name="Over" width="29" height="30">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUjAJUkMgIoZMZB9YdhAAb0H3sg9iNWkC3aQOxDhluZB3E/hpKYCMVw3Goxwm2/EJqHqJmeI6CwQcU8cTvYI57FqDbOAi4b6jn31EwMgAAmDQD0A==
+  </data>
+ </layer>
+ <layer name="Collision" width="29" height="30" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJx7yMjA8HAUDytMDMCnFpscLvWk2EktMGrn8LQTZi897KfETnLDiNy8Sg17iLWTXDfRy2+E7B8sdlLTLchmDTZ/kqufkJno8vQsE+gJRu1ElcfVxqCFndQA2NIptrROTzfQAwx0O2G4YwCfleZr
+  </data>
+ </layer>
+ <objectgroup name="Objects" width="29" height="30">
+  <object name="Portal" type="Portal" x="64" y="352" width="32" height="32">
    <properties>
     <property name="portal" value="Bank_Inside"/>
-    <property name="startx" value="2"/>
-    <property name="starty" value="11"/>
+    <property name="x" value="2"/>
+    <property name="y" value="11"/>
    </properties>
   </object>
  </objectgroup>
- <layer name="Meta" width="29" height="30">
-  <data encoding="base64" compression="zlib">
-   eJzt1jsKACAIAFC9/6VbHcryB6YKDkH2LChCAMDJUvkakrrTHKnpEWPGm0jGY/o4lrtqNaODnmPXu1LR/GGPXv1lNzXr7s7Sat7+ApypdTW1nBn99kr7iTI9a7KYHXIBWawBFg==
-  </data>
- </layer>
 </map>

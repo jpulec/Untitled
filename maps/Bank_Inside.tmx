@@ -1,16 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="29" height="30" tilewidth="32" tileheight="32">
- <tileset firstgid="1" name="Meta" tilewidth="32" tileheight="32">
-  <image source="../tilesets/Meta.png" width="64" height="64"/>
-  <tile id="0">
-   <properties>
-    <property name="collision" value=""/>
-   </properties>
-  </tile>
- </tileset>
- <tileset firstgid="5" name="Bank_Inside" tilewidth="32" tileheight="32">
-  <image source="../tilesets/Bank_Inside2.png" width="960" height="512"/>
- </tileset>
+ <tileset firstgid="1" source="../tilesets/Meta.tsx"/>
+ <tileset firstgid="5" source="../tilesets/Bank_Inside.tsx"/>
  <layer name="Ground" width="29" height="30">
   <data encoding="base64" compression="zlib">
    eJxjZGRg6GRgYOgiER9jJF1PNxAzA/XJA/FyIHsFHswKVMPGiCr2hBG/Hmx4JRArQu08CnI3HqwMVKPCiODzAtl8QMzPiF8fOj6OZOdjkLuR8B6g2F5GBN8RyHZC4msD2TpArMuIqo8QfopkZxkQlwNxBZR9C4hvYxGHsT2B2AuIvdHErYFm2jAg1G8GsrcwoKqB2TkFiKcC8TQK2ZFA86MYEOIXgexLDKhqYHZuArkJiLfQgQ2z8wLITUB8iQ5sXPFJSza145MYNnJ8tgxAfC4agPg8QOf4pARcIlE/zE47CvB/BtLUw+yMoQDLkqgeZuc/Boh76UHD7JSBupce9ED6kxKA7A9iAMxOHyD2BWI/MtjI/iBG/UiLz1F/jvqTEn/aMlJWr5CK7YE4mpGyeoVUHAvEADoYqDg=
@@ -18,28 +9,25 @@
  </layer>
  <layer name="Fringe" width="29" height="30">
   <data encoding="base64" compression="zlib">
-   eJxjYBiZYC4jA8M8IJ4PxAsY6WPnbiR79hFpZyJQXRIQywLZckjiU4F4GhH6byLZcwfKjgfSCXjsrwfKNdApTAYDKAfiCiT+eyD+MEBuGSwgFRr/6XRMB81Qu1rpaOdCqF2L6WjnfqhdB0dQHhsFo2AU4AZZwLIgG4hzGElnk2rOKBgFo2BwAwCKUhss
+   eJxjYBiZYC4jA8M8IJ4PxAsY6WPnbiR79hFpZyJQXRIQywLZckjiU4F4GhH6byLZcwfKjgfSCXjsrwfKNdApTAYDKAfiCiT+eyD+MEBuGcmgGZrmWumY9hZC7VpMRzv3Q+06OILy2CgYBaMAN8gClgXZQJzDSDqbVHNGwSgYBYMbAADoHBpe
   </data>
  </layer>
  <layer name="Over" width="29" height="30">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFo2AUjIJRMJyBAiP5mFT9o2AUUAvoAdOTPhAbMJLOJtWcUTAKRsEoGAwAAJ84B9s=
+   eJxjYBgFo2AUjAJUkMoIodMZB9Ydo4A6QIGRfEyq/lEwCqgF9IDpSR+IDRhJZ5NqzigYBaNgFAwGAABBbgip
   </data>
  </layer>
  <layer name="Collision" width="29" height="30" visible="0">
   <data encoding="base64" compression="zlib">
-   eJxjZGBgYBzFwwojA2xy6OpwyeNSh818aoGRYicxYCDtRE4Lw91OeoXzSLaTnDJsIMpNSstbWoNRO2lvJ6VpiJrm0dJOeoJRO0ftpJadIwEDALKSAWc=
+   eJxjZGBgYBzFwwojA2xy6OpwyeNSh818aoGRYicxYKTZiZz+hrud9ArnwWInOWXYQJSblJa3tAajdtLeTkrTEDXNo6Wd9ASjdo7aSS07RwIGAJcGAWQ=
   </data>
  </layer>
  <objectgroup name="Objects" width="29" height="30">
-  <object name="GameStart" x="352" y="768" width="32" height="32">
+  <object name="Portal" type="Portal" x="64" y="352" width="32" height="32">
    <properties>
-    <property name="gamestart" value=""/>
-   </properties>
-  </object>
-  <object name="Portal" x="64" y="320" width="32" height="32">
-   <properties>
-    <property name="portal" value=""/>
+    <property name="portal" value="Bank_Basement"/>
+    <property name="x" value="2"/>
+    <property name="y" value="11"/>
    </properties>
   </object>
  </objectgroup>
