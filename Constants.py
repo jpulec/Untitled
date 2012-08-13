@@ -14,4 +14,6 @@ DISPLAY = DisplayInfo.DisplayInfo(SCREEN_WIDTH, SCREEN_HEIGHT)
 TIMER =  pygame.time.Clock()
 
 #Custom events
-TRANSITION = pygame.USEREVENT + 1
+TRANSITION  = pygame.USEREVENT + 1
+LOAD_MAP    = pygame.USEREVENT + 2
+OVERWORLD   = pygame.USEREVENT + 3

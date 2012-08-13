@@ -2,7 +2,7 @@ import pygame
 import tiledtmxloader
 import PlayerData
 from pygame.locals import *
-from Constants import DISPLAY, SCREEN_WIDTH, SCREEN_HEIGHT, TILE_SIZE, IM, TRANSITION
+from Constants import *
 
 class Overworld:
     def __init__(self):
@@ -14,16 +14,15 @@ class Overworld:
         self.player = None
         self.input = False
         self.on_object = False
+        self.event_wait = False
         self.cam_world_pos_x = 0
         self.cam_world_pos_y = 0
+        self.resources = tiledtmxloader.helperspygame.ResourceLoaderPygame()
+        self.renderer = tiledtmxloader.helperspygame.RendererPygame()
 
     def load_map(self, mapName, x, y):
         self.map = tiledtmxloader.tmxreader.TileMapParser().parse_decode(mapName)
-
-        self.resources = tiledtmxloader.helperspygame.ResourceLoaderPygame()
         self.resources.load(self.map)
-
-        self.renderer = tiledtmxloader.helperspygame.RendererPygame()
 
         # cam_offset is for scrolling
         cam_world_pos_x = x
@@ -40,9 +39,13 @@ class Overworld:
             self.player.current_skin = "Miles_regular"
             self.player.draw()
             self.sprite_layers[1].add_sprite(self.player.sprite)
+        surf = pygame.Surface(DISPLAY.screen.get_size())
+        self.draw_world(surf)
+        pygame.event.post(pygame.event.Event(TRANSITION, {"type":"fade", "background":surf}))
+        pygame.event.post(pygame.event.Event(OVERWORLD))
 
     def draw(self):
-        self.draw_world()
+        self.draw_world(DISPLAY.screen)
 
     def update(self):
         self.update_world()
@@ -175,27 +178,27 @@ class Overworld:
                 if obj.properties.has_key("portal"):
                     #try
                     #self.load_map("maps/" + obj.properties["portal"] + ".tmx", int(obj.properties["x"])*TILE_SIZE, int(obj.properties["y"])*TILE_SIZE)
-                    pygame.event.post(pygame.event.Event(TRANSITION, {"type":"fade", "color":"black"}))
-                    
+                    pygame.event.post(pygame.event.Event(TRANSITION, {"type":"fade", "background":pygame.Surface(DISPLAY.screen.get_size())}))
+                    pygame.event.post(pygame.event.Event(LOAD_MAP, {"map":obj.properties["portal"], "x":int(obj.properties["x"])*TILE_SIZE, "y":int(obj.properties["y"])*TILE_SIZE}))
                     #except Exception
                     #    pass
             #print str(objects)
             #if object_layer.content2D[tile_y][tile_x].
 
-    def draw_world(self):
+    def draw_world(self, screen):
         DISPLAY.screen.fill((0, 0, 0))
         self.sprite_layers[1].remove_sprite(self.player.sprite)
         self.player.draw()
         #print str(self.cam_world_pos_x)
         self.sprite_layers[1].add_sprite(self.player.sprite)
-        self.draw_map()
+        self.draw_map(screen)
 
-    def draw_map(self):
+    def draw_map(self, screen):
         # adjust camera to position according to the keypresses
         self.renderer.set_camera_position(self.cam_world_pos_x, self.cam_world_pos_y, "topleft")
         # render the map
         for sprite_layer in self.sprite_layers:
-            self.renderer.render_layer(DISPLAY.screen, sprite_layer)
+            self.renderer.render_layer(screen, sprite_layer)
 
 class Avatar:
     def __init__(self, name):
