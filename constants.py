@@ -2,6 +2,9 @@
 import image_data
 import display_info
 import pygame.time
+import utils
+
+DIRECTIONS = utils.Enum(["N", "E", "S", "W"])
 
 TILE_SIZE = 32
 SCREEN_WIDTH = 800

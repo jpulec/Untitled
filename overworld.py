@@ -1,87 +1,66 @@
 import pygame
-import tiledtmxloader
+import pytmx
+import utils
 import player_data
-import context
+import inspect
+import sys
+import cevent
+import sprite_bases
 from constants import *
+import pygame.locals as pl
 
-class Overworld(context.Context):
-    def __init__(self):
+class Overworld(cevent.CEvent):
+    def __init__(self, map_name):
         super(Overworld, self).__init__()
-        self.map = None
-        self.renderer = None
-        self.resources = None
-        self.sprite_layers = None
-        self.object_layers = None
-        self.player = None
-        self.input = False
-        self.on_object = False
-        self.event_wait = False
+        self.map = pytmx.tmxloader.load_pygame(map_name, pixelalpha=True)
+        self.player = sprite_bases.Avatar("Miles_regular") 
         self.cam_world_pos_x = 0
         self.cam_world_pos_y = 0
-        self.resources = tiledtmxloader.helperspygame.ResourceLoaderPygame()
-        self.renderer = tiledtmxloader.helperspygame.RendererPygame()
+        self.sprites = utils.SourceRectGroup()
+        self.sprites.add(self.player)
 
-    def load_map(self, mapName, x, y):
-        self.map = tiledtmxloader.tmxreader.TileMapParser().parse_decode(mapName)
-        self.resources.load(self.map)
+    def render(self, surface):
 
-        # cam_offset is for scrolling
-        cam_world_pos_x = x
-        cam_world_pos_y = y
-
-        # set initial cam position and size
-        self.renderer.set_camera_position_and_size(self.cam_world_pos_x, self.cam_world_pos_y, SCREEN_WIDTH, SCREEN_HEIGHT, "topleft")
-
-        # retrieve the layers
-        self.sprite_layers = [layer for layer in tiledtmxloader.helperspygame.get_layers_from_map(self.resources) if not layer.is_object_group]
-        self.object_layers = [layer for layer in tiledtmxloader.helperspygame.get_layers_from_map(self.resources) if layer.is_object_group]
-        if self.player is None:
-            self.player = Avatar("Miles")
-            self.player.current_skin = "Miles_regular"
-            self.player.draw()
-            self.sprite_layers[1].add_sprite(self.player.sprite)
-        surf = pygame.Surface(DISPLAY.screen.get_size())
-        self.draw_world(surf)
-        pygame.event.post(pygame.event.Event(TRANSITION, {"type":"fade", "background":surf}))
-        pygame.event.post(pygame.event.Event(OVERWORLD))
-
-    def draw(self):
-        self.draw_world(DISPLAY.screen)
+        tw = self.map.tilewidth
+        th = self.map.tileheight
+        gt = self.map.getTileImage
+        for l in xrange(0, len(self.map.tilelayers)):
+            if self.map.tilelayers[l].name != "Collision":
+                for y in xrange(0, self.map.height):
+                    for x in xrange(0, self.map.width):
+                        tile = gt(x, y, l)
+                        if tile:
+                            surface.blit(tile, (x*tw, y*th))
+        self.sprites.update(pygame.time.get_ticks())
+        self.sprites.draw(surface)
 
     def update(self):
         self.update_world()
 
-    def handle_events(self, e):
-        if e.key == K_ESCAPE:
-            #TODO: implement whatever behavior I want here
-            return
-        #TODO: this movement needs some work, should really fix collisions and such
-        if e.key == K_LEFT:
-            if self.cam_world_pos_x % 32 == 0 and self.cam_world_pos_y % 32 == 0:
-                if not self.player.facing == 14:
-                    self.player.facing = 12
-                self.input = True
+    def on_exit(self):
+        #TODO: Probably need to handle this more gracefully
+        sys.exit(0)
 
-        elif e.key == K_RIGHT:
+    def on_key_down(self, event):
+        if event.key == pl.K_LEFT:
             if self.cam_world_pos_x % 32 == 0 and self.cam_world_pos_y % 32 == 0:
-                if not self.player.facing == 6:
-                    self.player.facing = 4
-                self.input = True
+                if not self.player._frame == 14:
+                    self.player._frame = 12
+
+        elif event.key == pl.K_RIGHT:
+            if self.cam_world_pos_x % 32 == 0 and self.cam_world_pos_y % 32 == 0:
+                if not self.player._frame == 6:
+                    self.player._frame = 4
                
-        elif e.key == K_UP:
+        elif event.key == pl.K_UP:
             if self.cam_world_pos_x % 32 == 0 and self.cam_world_pos_y % 32 == 0:
-                if not self.player.facing == 2:
-                    self.player.facing = 0
-                self.input = True
+                if not self.player._frame == 2:
+                    self.player._frame = 0
 
-        elif e.key == K_DOWN:
+        elif event.key == pl.K_DOWN:
             if self.cam_world_pos_x % 32 == 0 and self.cam_world_pos_y % 32 == 0:
-                if not self.player.facing == 10:
-                    self.player.facing = 8
-                self.input = True
-
-        elif e.key == K_RETURN:
-            pass
+                if not self.player._frame == 10:
+                    self.player._frame = 8
 
     def update_world(self):
         if self.cam_world_pos_x % 32 == 0 and self.cam_world_pos_y % 32 == 0 and not self.on_object:
@@ -200,20 +179,3 @@ class Overworld(context.Context):
         # render the map
         for sprite_layer in self.sprite_layers:
             self.renderer.render_layer(screen, sprite_layer)
-
-class Avatar:
-    def __init__(self, name):
-        self.imrect = pygame.Rect(DISPLAY.screen_width / 2 - 16, DISPLAY.screen_height / 2 - 16, TILE_SIZE, TILE_SIZE * 2)
-        self.rect = pygame.Rect(DISPLAY.screen_width / 2 - 16, DISPLAY.screen_height / 2 - 16 + 32, TILE_SIZE, TILE_SIZE)
-        self.facing = 0
-        self.current_skin = None
-        self.image = None
-        self.sprite = None
-        
-
-    def draw(self):
-        src_rect = IM.sprite_rects[self.current_skin][self.facing + 1]
-        self.image = IM.textures[self.current_skin][0]
-        self.sprite = tiledtmxloader.helperspygame.SpriteLayer.Sprite(self.image, self.imrect, src_rect)
-
-
