@@ -1,4 +1,4 @@
-class Party:
+class Party(object):
     def __init__(self):
         self.team = dict()
         self.money = 0

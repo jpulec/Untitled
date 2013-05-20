@@ -1,12 +1,9 @@
-import Creature
+import sprite_bases
 import pygame
 
-class PlayerData(Creature.Creature):
+class PlayerData(sprite_bases.Creature):
     def __init__(self, name):
-        Creature.Creature.__init__(self, name)        
-        #self.collisionRect = pygame.Rect(288, 216, 24, 24)
-        #self.font = pygame.font.Font(None, 24)
-        #self.rect = pygame.Rect(display.screenwidth / 2, display.screenheight / 2, 32, 32)
+        super(PlayerData, self).__init__(name)
         self.currentSkin = None
         self.rHand = None
         self.lHand = None

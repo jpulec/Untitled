@@ -1,16 +1,15 @@
 #Global constant data
-import ImageData
-import DisplayInfo
+import image_data
+import display_info
 import pygame.time
-from pygame.locals import *
 
 TILE_SIZE = 32
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 608
 
-IM = ImageData.ImageData()
+IM = image_data.ImageData()
 IM.setup()
-DISPLAY = DisplayInfo.DisplayInfo(SCREEN_WIDTH, SCREEN_HEIGHT)
+DISPLAY = display_info.DisplayInfo(SCREEN_WIDTH, SCREEN_HEIGHT)
 TIMER =  pygame.time.Clock()
 
 #Custom events

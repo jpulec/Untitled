@@ -1,8 +1,6 @@
-
 import pygame,sys
 
-
-class ImageData:
+class ImageData(object):
     def __init__(self):
         self.textures = dict()
         self.sprite_rects = dict()

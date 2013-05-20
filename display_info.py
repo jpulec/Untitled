@@ -1,11 +1,11 @@
 import pygame
 
-class DisplayInfo:
+class DisplayInfo(object):
     def __init__(self, width, height):
         pygame.init()
         self.screen_height = height
         self.screen_width = width
-        self.is_fullscreen = 0 # changed for testing
+        self.is_fullscreen = 0 
         self.window = pygame.rect.Rect(0, 0, self.screen_width-1, self.screen_height-1)
         self.screen = None
         self.icon_surface = None

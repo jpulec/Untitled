@@ -1,9 +1,8 @@
-from Constants import DISPLAY, SCREEN_WIDTH, SCREEN_HEIGHT, TRANSITION
-from pygame.locals import *
+from constants import DISPLAY, SCREEN_WIDTH, SCREEN_HEIGHT, TRANSITION
 import pygame
 
 
-class Transition:
+class Transition(object):
     def __init__(self, dic):
         self.type = dic["type"]
         self.background = dic["background"]

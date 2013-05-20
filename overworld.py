@@ -1,11 +1,12 @@
 import pygame
 import tiledtmxloader
-import PlayerData
-from pygame.locals import *
-from Constants import *
+import player_data
+import context
+from constants import *
 
-class Overworld:
+class Overworld(context.Context):
     def __init__(self):
+        super(Overworld, self).__init__()
         self.map = None
         self.renderer = None
         self.resources = None
