@@ -1,11 +1,5 @@
 import pygame
 
-class Enum(set):
-    def __getattr__(self, name):
-        if name in self:
-            return name
-        raise AttributeError
-
 class SourceRectGroup(pygame.sprite.Group):
     def __init__(self, *args, **kwargs):
         super(SourceRectGroup, self).__init__(*args, **kwargs)

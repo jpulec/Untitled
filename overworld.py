@@ -20,22 +20,22 @@ class Overworld(cevent.CEvent):
         self.sprites.add(self.player)
 
     def render(self, surface):
-
+        DISPLAY.screen.fill((0,0,0))
         tw = self.map.tilewidth
         th = self.map.tileheight
         gt = self.map.getTileImage
         for l in xrange(0, len(self.map.tilelayers)):
-            if self.map.tilelayers[l].name != "Collision":
+            if self.map.tilelayers[l].visible:
                 for y in xrange(0, self.map.height):
                     for x in xrange(0, self.map.width):
                         tile = gt(x, y, l)
                         if tile:
-                            surface.blit(tile, (x*tw, y*th))
-        self.sprites.update(pygame.time.get_ticks())
+                            surface.blit(tile, (x*tw - self.cam_world_pos_x, y*th - self.cam_world_pos_y))
         self.sprites.draw(surface)
 
     def update(self):
         self.update_world()
+        self.sprites.update(pygame.time.get_ticks())
 
     def on_exit(self):
         #TODO: Probably need to handle this more gracefully
@@ -44,138 +44,84 @@ class Overworld(cevent.CEvent):
     def on_key_down(self, event):
         if event.key == pl.K_LEFT:
             if self.cam_world_pos_x % 32 == 0 and self.cam_world_pos_y % 32 == 0:
-                if not self.player._frame == 14:
-                    self.player._frame = 12
+                self.player.direction = Directions.W
+                self.player.moving = True
+            self.player.animate = True
 
         elif event.key == pl.K_RIGHT:
             if self.cam_world_pos_x % 32 == 0 and self.cam_world_pos_y % 32 == 0:
-                if not self.player._frame == 6:
-                    self.player._frame = 4
+                self.player.direction = Directions.E
+                self.player.moving = True
+            self.player.animate = True
                
         elif event.key == pl.K_UP:
             if self.cam_world_pos_x % 32 == 0 and self.cam_world_pos_y % 32 == 0:
-                if not self.player._frame == 2:
-                    self.player._frame = 0
+                self.player.direction = Directions.N
+                self.player.moving = True
+            self.player.animate = True
 
         elif event.key == pl.K_DOWN:
             if self.cam_world_pos_x % 32 == 0 and self.cam_world_pos_y % 32 == 0:
-                if not self.player._frame == 10:
-                    self.player._frame = 8
+                self.player.direction = Directions.S
+                self.player.moving = True
+            self.player.animate = True
 
     def update_world(self):
-        if self.cam_world_pos_x % 32 == 0 and self.cam_world_pos_y % 32 == 0 and not self.on_object:
-            self.check_object(self.object_layers[0])
-        if self.input:
-            self.check_collision(self.player.facing, self.sprite_layers[3])
-            self.input = False
-            self.on_object = False
-        elif self.cam_world_pos_x % 32 is not 0:
-            if self.player.facing > 11:
-                if self.cam_world_pos_x % 16 == 0:
-                    self.player.facing += 1
-                self.player.rect.move_ip(-2, 0)
-                self.player.imrect.move_ip(-2, 0)
+        if self.cam_world_pos_x % 32 == 0 and self.cam_world_pos_y % 32 == 0 and self.player.moving:
+            self.check_collision(self.player.direction, 3)
+        elif self.cam_world_pos_x % 32 != 0:
+            if self.player.direction == Directions.W:
+                self.player.col_rect.move_ip(-2, 0)
                 self.cam_world_pos_x -= 2
-            elif self.player.facing > 3:
-                if self.cam_world_pos_x % 16 == 0:
-                    self.player.facing += 1
-                self.player.rect.move_ip(2, 0)
-                self.player.imrect.move_ip(2, 0)
+            elif self.player.direction == Directions.E:
+                self.player.col_rect.move_ip(2, 0)
                 self.cam_world_pos_x += 2
 
-        elif self.cam_world_pos_y % 32 is not 0:
-            if self.player.facing < 4:
-                if self.cam_world_pos_y % 16 == 0:
-                    self.player.facing += 1
-                self.player.rect.move_ip(0, -2)
-                self.player.imrect.move_ip(0, -2)
+        elif self.cam_world_pos_y % 32 != 0:
+            if self.player.direction == Directions.N:
+                self.player.col_rect.move_ip(0, -2)
                 self.cam_world_pos_y -= 2
-            elif self.player.facing > 7:
-                if self.cam_world_pos_y % 16 == 0:
-                    self.player.facing += 1
-                self.player.rect.move_ip(0, 2)
-                self.player.imrect.move_ip(0, 2)
+            elif self.player.direction == Directions.S:
+                self.player.col_rect.move_ip(0, 2)
                 self.cam_world_pos_y += 2
-        elif self.player.facing % 4 == 1:
-            self.player.facing +=1
-        elif self.player.facing % 4 == 3:
-            self.player.facing -= 3
+        elif self.player.moving:
+            self.player.animate = False
 
     def check_collision(self, facing, coll_layer):
-        if facing %2 != 0:
-            return
-        '''if facing % 4 != 0 or not self.cam_world_pos_x % 32 == 0 or not self.cam_world_pos_y % 32 == 0:
-            return self.cam_world_pos_x, self.cam_world_pos_y'''
-
         # find the tile location of the hero
-        tile_x = int((self.player.rect.left) / coll_layer.tilewidth)
-        tile_y = int((self.player.rect.top) / coll_layer.tileheight)
+        tile_x = int((self.player.rect.left) / TILE_SIZE)
+        tile_y = int((self.player.rect.top) / TILE_SIZE)
 
         step_x = 0
         step_y = 0
 
-        if facing == 4 or facing == 6:
+        if facing == Directions.E:
             step_x = 2
             step_y = 0
-        elif facing == 0 or facing == 2:
+        elif facing == Directions.N:
             step_x = 0
             step_y = -2
-        elif facing == 8 or facing == 10:
+        elif facing == Directions.S:
             step_x = 0
             step_y = 2
-        elif facing == 12 or facing == 14:
+        elif facing == Directions.W:
             step_x = -2
             step_y = 0
 
         # find the tiles around the hero and extract their rects for collision
         tile_rects = []
+        layer_data = self.map.getLayerData(coll_layer)
         for diry in (-1, 0 , 1):
             for dirx in (-1, 0, 1):
-                if coll_layer.content2D[tile_y + diry][tile_x + dirx] is not None:
-                    tile_rects.append(coll_layer.content2D[tile_y + diry][tile_x + dirx].rect)
-
+                #print str(layer_data[tile_x + dirx][tile_y + diry])
+                if layer_data[tile_y + diry][tile_x + dirx] is not None:
+                    tile_rects.append(pygame.rect.Rect((tile_y + diry) * TILE_SIZE, (tile_x + dirx) * TILE_SIZE, TILE_SIZE, TILE_SIZE))
         if self.player.rect.move(step_x, 0).collidelist(tile_rects) > -1:
             step_x = 0
 
         if self.player.rect.move(0, step_y).collidelist(tile_rects) > -1:
             step_y = 0
 
-        self.player.rect.move_ip(step_x, step_y)
-        self.player.imrect.move_ip(step_x, step_y)
+        self.player.col_rect.move_ip(step_x, step_y)
         self.cam_world_pos_x += step_x
         self.cam_world_pos_y += step_y
-    
-    def check_object(self, object_layer):
-        tile_x = int((self.player.rect.left) / TILE_SIZE)#object_layer.tilewidth)
-        tile_y = int((self.player.rect.top) / TILE_SIZE)#object_layer.tileheight)
-        if object_layer.objects is not None:
-            objects = [x for x in object_layer.objects if ((x.x / TILE_SIZE) == tile_x) and ((x.y / TILE_SIZE) == tile_y)]
-            if len(objects) == 0:
-                self.on_object = False
-            else:
-                self.on_object = True
-            for obj in objects:
-                if obj.properties.has_key("portal"):
-                    #try
-                    #self.load_map("maps/" + obj.properties["portal"] + ".tmx", int(obj.properties["x"])*TILE_SIZE, int(obj.properties["y"])*TILE_SIZE)
-                    pygame.event.post(pygame.event.Event(TRANSITION, {"type":"fade", "background":pygame.Surface(DISPLAY.screen.get_size())}))
-                    pygame.event.post(pygame.event.Event(LOAD_MAP, {"map":obj.properties["portal"], "x":int(obj.properties["x"])*TILE_SIZE, "y":int(obj.properties["y"])*TILE_SIZE}))
-                    #except Exception
-                    #    pass
-            #print str(objects)
-            #if object_layer.content2D[tile_y][tile_x].
-
-    def draw_world(self, screen):
-        DISPLAY.screen.fill((0, 0, 0))
-        self.sprite_layers[1].remove_sprite(self.player.sprite)
-        self.player.draw()
-        #print str(self.cam_world_pos_x)
-        self.sprite_layers[1].add_sprite(self.player.sprite)
-        self.draw_map(screen)
-
-    def draw_map(self, screen):
-        # adjust camera to position according to the keypresses
-        self.renderer.set_camera_position(self.cam_world_pos_x, self.cam_world_pos_y, "topleft")
-        # render the map
-        for sprite_layer in self.sprite_layers:
-            self.renderer.render_layer(screen, sprite_layer)

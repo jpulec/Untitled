@@ -4,7 +4,8 @@ import display_info
 import pygame.time
 import utils
 
-DIRECTIONS = utils.Enum(["N", "E", "S", "W"])
+class Directions(object):
+    (N, E, S, W) = (0, 4, 8, 12)
 
 TILE_SIZE = 32
 SCREEN_WIDTH = 800

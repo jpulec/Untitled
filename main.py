@@ -20,7 +20,7 @@ class Main(object):
         self.font = pygame.font.Font(None, 24)
         self.context = None
         self.overworld = None
-        self.debug = False
+        self.debug = True
         
     def init_display(self):
         DISPLAY.create_screen()       
@@ -33,13 +33,16 @@ class Main(object):
             #event2 = pygame.event.peek([LOAD_MAP])
             for event in pygame.event.get():
                 self.context.on_event(event)
+            self.context.update()
             self.context.render(DISPLAY.screen)
+            self.game_draw()
             pygame.display.flip()
             TIMER.tick(60)
     
     def game_draw(self):
         if self.debug:
             DISPLAY.screen.blit(self.font.render(str(TIMER.get_fps()), 0, (255,255,255)), (24,24))
+            DISPLAY.screen.blit(self.font.render(str(self.context.cam_world_pos_x) + " " + str(self.context.cam_world_pos_y), 0, (255,255,255)), (600, 24))
 
     def init_world(self):
         self.overworld = overworld.Overworld("maps/Bank_Inside.tmx")
