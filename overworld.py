@@ -20,6 +20,8 @@ class Overworld(cevent.CEvent):
         self.sprites.add(self.player)
 
     def render(self, surface):
+        #TODO: Make this more efficient and a little cleaner, especially with the edge drawing
+
         DISPLAY.screen.fill((0,0,0))
         tw = self.map.tilewidth
         th = self.map.tileheight
