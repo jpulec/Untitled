@@ -9,8 +9,9 @@ class Battlefield(overworld.Overworld):
         super(Battlefield, self).__init__(*args, **kwargs)
         self.cursor = None
 
-    def initialize(self, overworld_instance):
-        self.cursor = Cursor("battle_cursor", self.player.col_rect.copy())
+    def initialize(self):
+        self.cursor = Cursor(self.player.col_rect.copy(), "system", frame_count=4)
+        self.sprites.add(self.cursor)
 
     def on_key_down(self, event):
         if event.key == pl.K_RETURN:

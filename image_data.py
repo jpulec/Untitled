@@ -37,3 +37,10 @@ class ImageData(object):
             for y in range(0,4):
                 for x in range(0,4):
                     self.sprite_rects[name+"_"+skin].append(pygame.rect.Rect(x*32,y*64,32,64))
+
+        system = "system.png"
+        self.load_texture("system", "images/" + system, -1)
+        for y in range(0,4):
+            for x in range(0,4):
+                self.sprite_rects["system"].append(pygame.rect.Rect(x*32,y*32,32,32))
+        

@@ -2,12 +2,13 @@ import pygame
 from constants import *
 
 class AnimatedSprite(pygame.sprite.Sprite):
-    def __init__(self, name, fps=10):
-        super(AnimatedSprite, self).__init__()
+    def __init__(self, name, fps=10, frame=1, frame_count=4, *args, **kwargs):
+        super(AnimatedSprite, self).__init__(*args, **kwargs)
         self.name = name
+        self.frame_count = frame_count
         self.image = IM.textures[name][0]
         self.src_rect = None
-        self._frame = 1
+        self._frame = frame
         self._start = pygame.time.get_ticks()
         self._delay = 1000 / fps
         self._last_update = 0
@@ -17,7 +18,7 @@ class AnimatedSprite(pygame.sprite.Sprite):
     def update(self, t):
         if t - self._last_update > self._delay:
             self._frame += 1
-            if self._frame >= len(IM.sprite_rects[self.name]):
+            if self._frame > self.frame_count:
                 self._frame = 1
             self.src_rect = IM.sprite_rects[self.name][self._frame]
             self._last_update = t

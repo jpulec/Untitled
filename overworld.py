@@ -133,5 +133,6 @@ class Overworld(cevent.CEvent):
 
     def battle(self):
         self.__class__ = battlefield.Battlefield
+        self.initialize()
 
 import battlefield
