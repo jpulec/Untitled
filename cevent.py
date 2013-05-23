@@ -2,8 +2,8 @@ import pygame
 import pygame.locals as pl
 
 class CEvent(object):
-    def __init__(self):
-        pass
+    def __init__(self, *args, **kwargs):
+        super(CEvent, self).__init__(*args, **kwargs)
 
     def on_exit(self):
         pass

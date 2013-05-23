@@ -10,8 +10,8 @@ from constants import *
 import pygame.locals as pl
 
 class Overworld(cevent.CEvent):
-    def __init__(self, map_name):
-        super(Overworld, self).__init__()
+    def __init__(self, map_name, *args, **kwargs):
+        super(Overworld, self).__init__(*args, **kwargs)
         self.map = pytmx.tmxloader.load_pygame(map_name, pixelalpha=True)
         self.player = sprite_bases.Avatar("Miles_regular") 
         self.cam_world_pos_x = 0
@@ -132,4 +132,6 @@ class Overworld(cevent.CEvent):
 
 
     def battle(self):
-        self.__class__ = battlefield.Battlefield()
+        self.__class__ = battlefield.Battlefield
+
+import battlefield
