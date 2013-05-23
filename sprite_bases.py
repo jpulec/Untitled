@@ -67,5 +67,5 @@ class Creature(AnimatedSprite):
 class Avatar(MovingSprite):
     def __init__(self, name):
         super(Avatar, self).__init__(name, fps=10)
-        self.col_rect = pygame.Rect(DISPLAY.screen_width / 2 - 16, DISPLAY.screen_height / 2 - 16 + 32, TILE_SIZE, TILE_SIZE)
-        self.rect = pygame.Rect(DISPLAY.screen_width / 2 - 16, DISPLAY.screen_height / 2 - 16, TILE_SIZE, TILE_SIZE)
+        self.col_rect = pygame.Rect(DISPLAY.screen_width / 2 - TILE_SIZE / 2, DISPLAY.screen_height / 2 - TILE_SIZE / 2 + TILE_SIZE, TILE_SIZE, TILE_SIZE)
+        self.rect = pygame.Rect(DISPLAY.screen_width / 2 - TILE_SIZE / 2, DISPLAY.screen_height / 2 - TILE_SIZE / 2, TILE_SIZE, TILE_SIZE)

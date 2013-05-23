@@ -32,6 +32,13 @@ class Overworld(cevent.CEvent):
                         if tile:
                             surface.blit(tile, (x*tw - self.cam_world_pos_x, y*th - self.cam_world_pos_y))
         self.sprites.draw(surface)
+        for y in xrange(0, self.map.height):
+            for x in xrange(0, self.map.width):
+                tile = gt(x, y, 2)
+                if tile:
+                    surface.blit(tile, (x*tw - self.cam_world_pos_x, y*th - self.cam_world_pos_y))
+
+
 
     def update(self):
         self.update_world()
@@ -92,8 +99,9 @@ class Overworld(cevent.CEvent):
 
     def check_collision(self, facing, coll_layer):
         # find the tile location of the hero
-        tile_x = int((self.player.rect.left) / TILE_SIZE)
-        tile_y = int((self.player.rect.top) / TILE_SIZE)
+        tile_x = int((self.player.col_rect.left) / TILE_SIZE)
+        tile_y = int((self.player.col_rect.top) / TILE_SIZE)
+
 
         step_x = 0
         step_y = 0
@@ -116,13 +124,13 @@ class Overworld(cevent.CEvent):
         layer_data = self.map.getLayerData(coll_layer)
         for diry in (-1, 0 , 1):
             for dirx in (-1, 0, 1):
-                #print str(layer_data[tile_x + dirx][tile_y + diry])
-                if layer_data[tile_y + diry][tile_x + dirx] is not None:
-                    tile_rects.append(pygame.rect.Rect((tile_y + diry) * TILE_SIZE, (tile_x + dirx) * TILE_SIZE, TILE_SIZE, TILE_SIZE))
-        if self.player.rect.move(step_x, 0).collidelist(tile_rects) > -1:
+                if self.map.getTileImage(tile_x + dirx, tile_y + diry, coll_layer) != 0: #I believe this is gid for meta collision
+                    tile_rects.append(pygame.rect.Rect((tile_x + dirx) * TILE_SIZE, (tile_y + diry) * TILE_SIZE, TILE_SIZE, TILE_SIZE))
+        
+        if self.player.col_rect.move(step_x, 0).collidelist(tile_rects) > -1:
             step_x = 0
 
-        if self.player.rect.move(0, step_y).collidelist(tile_rects) > -1:
+        if self.player.col_rect.move(0, step_y).collidelist(tile_rects) > -1:
             step_y = 0
 
         self.player.col_rect.move_ip(step_x, step_y)
