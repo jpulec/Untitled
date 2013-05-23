@@ -66,6 +66,9 @@ class Overworld(cevent.CEvent):
                 self.player.moving = True
             self.player.animate = True
 
+        elif event.key == pl.K_b:
+            self.battle()
+
     def update_world(self):
         if self.cam_world_pos_x % 32 == 0 and self.cam_world_pos_y % 32 == 0 and self.player.moving:
             self.check_collision(self.player.direction, 3)
@@ -125,3 +128,8 @@ class Overworld(cevent.CEvent):
         self.player.col_rect.move_ip(step_x, step_y)
         self.cam_world_pos_x += step_x
         self.cam_world_pos_y += step_y
+
+
+
+    def battle(self):
+        self.__class__ = battlefield.Battlefield()

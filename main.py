@@ -6,7 +6,7 @@ import overworld
 import sys
 import cevent
 import party
-import transition
+import battlefield
 from constants import *
 
 class Main(object):
@@ -21,16 +21,15 @@ class Main(object):
         self.context = None
         self.overworld = None
         self.debug = True
-        
+
     def init_display(self):
-        DISPLAY.create_screen()       
+        DISPLAY.create_screen()
         DISPLAY.screen.fill((0, 0, 0))
-    
+
 
     def main_loop(self):
         self.init_world()
         while(True):
-            #event2 = pygame.event.peek([LOAD_MAP])
             for event in pygame.event.get():
                 self.context.on_event(event)
             self.context.update()
@@ -38,7 +37,7 @@ class Main(object):
             self.game_draw()
             pygame.display.flip()
             TIMER.tick(60)
-    
+
     def game_draw(self):
         if self.debug:
             DISPLAY.screen.blit(self.font.render(str(TIMER.get_fps()), 0, (255,255,255)), (24,24))
@@ -50,6 +49,6 @@ class Main(object):
         self.party.team["Miles"] = player_data.PlayerData("Miles_regular")
 
 
-if __name__ == "__main__":                                                   
+if __name__ == "__main__":
     game = Main()
     game.main_loop()

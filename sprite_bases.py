@@ -5,7 +5,7 @@ class AnimatedSprite(pygame.sprite.Sprite):
     def __init__(self, name, fps=10):
         super(AnimatedSprite, self).__init__()
         self.name = name
-        self.image = IM.textures[name][0] 
+        self.image = IM.textures[name][0]
         self.src_rect = None
         self._frame = 1
         self._start = pygame.time.get_ticks()

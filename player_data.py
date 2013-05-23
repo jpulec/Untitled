@@ -15,4 +15,3 @@ class PlayerData(sprite_bases.Creature):
         playerSurface =  imageManager.textures[self.currentSkin][0]
         playerSprite = imageManager.spriteRects[self.currentSkin][self.facing + 1]
         screen.blit(playerSurface, self.rect, playerSprite)
-
