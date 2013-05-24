@@ -33,8 +33,8 @@ class Battlefield(overworld.Overworld):
                     # oh yeah, here be sprites under my selector
                     #new_layer = TiledLayer(self.map, None)
                     #new_layer
-                    self.map.tilelayers[0].data[self.cursor.rect.top / TILE_SIZE + 1][self.cursor.rect.left / TILE_SIZE - 1] = 111
-                    self.map.tilelayers[1].data[self.cursor.rect.top / TILE_SIZE + 1][self.cursor.rect.left / TILE_SIZE - 1] = 111
+                    self.map.tilelayers[0].data[(self.cursor.rect.top + self.cam_world_pos_y) / TILE_SIZE + 1][(self.cursor.rect.left + self.cam_world_pos_x) / TILE_SIZE - 1] = 111
+                    self.map.tilelayers[1].data[(self.cursor.rect.top + self.cam_world_pos_y) / TILE_SIZE + 1][(self.cursor.rect.left + self.cam_world_pos_x) / TILE_SIZE - 1] = 111
                     print sprite
             print "Fuck yea, some crazy black magic voodoo class shit is going on here"
         
