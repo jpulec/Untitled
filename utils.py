@@ -8,5 +8,8 @@ class SourceRectGroup(pygame.sprite.Group):
         sprites = self.sprites()
         surface_blit = surface.blit
         for spr in sprites:
-            self.spritedict[spr] = surface_blit(spr.image, spr.rect, spr.src_rect)
+            if hasattr(spr, "draw"):
+                self.spritedict[spr] = spr.draw()
+            else:
+                self.spritedict[spr] = surface_blit(spr.image, spr.rect, spr.src_rect)
         self.lostsprites = []

@@ -11,9 +11,10 @@ TILE_SIZE = 32
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 608
 
+DISPLAY = display_info.DisplayInfo(SCREEN_WIDTH, SCREEN_HEIGHT)
+DISPLAY.create_screen()
 IM = image_data.ImageData()
 IM.setup()
-DISPLAY = display_info.DisplayInfo(SCREEN_WIDTH, SCREEN_HEIGHT)
 TIMER =  pygame.time.Clock()
 
 #Custom events

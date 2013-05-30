@@ -13,11 +13,12 @@ class Overworld(cevent.CEvent):
     def __init__(self, map_name, *args, **kwargs):
         super(Overworld, self).__init__(*args, **kwargs)
         self.map = pytmx.tmxloader.load_pygame(map_name, pixelalpha=True)
-        self.player = sprite_bases.Avatar("Miles_regular") 
         self.cam_world_pos_x = 0
         self.cam_world_pos_y = 0
-        self.sprites = utils.SourceRectGroup()
-        self.sprites.add(self.player)
+        self.sprites = pygame.sprite.Group() #utils.SourceRectGroup()
+        self.player = sprite_bases.Avatar("Miles_regular", self.sprites) 
+        self._delay = 1000 / 60
+        self._last_update = 0
 
     def render(self, surface):
         #TODO: Make this more efficient and a little cleaner, especially with the edge drawing
@@ -43,8 +44,9 @@ class Overworld(cevent.CEvent):
 
 
     def update(self):
-        self.update_world()
-        self.sprites.update(pygame.time.get_ticks())
+        time = pygame.time.get_ticks()
+        self.update_world(time)
+        self.sprites.update(time)
 
     def on_exit(self):
         #TODO: Probably need to handle this more gracefully
@@ -78,26 +80,57 @@ class Overworld(cevent.CEvent):
         elif event.key == pl.K_b:
             self.battle()
 
-    def update_world(self):
-        if self.cam_world_pos_x % 32 == 0 and self.cam_world_pos_y % 32 == 0 and self.player.moving:
-            self.check_collision(self.player.direction, 3)
-        elif self.cam_world_pos_x % 32 != 0:
-            if self.player.direction == Directions.W:
-                self.player.col_rect.move_ip(-2, 0)
-                self.cam_world_pos_x -= 2
-            elif self.player.direction == Directions.E:
-                self.player.col_rect.move_ip(2, 0)
-                self.cam_world_pos_x += 2
+        elif event.key == pl.K_RETURN:
+            for sprite in self.sprites:
+                if type(sprite) == text_box.TextBox:
+                    #so get rid of open textboxes
+                    sprite.kill()
+            tile_x = int((self.player.col_rect.left) / TILE_SIZE)
+            tile_y = int((self.player.col_rect.top) / TILE_SIZE)
 
-        elif self.cam_world_pos_y % 32 != 0:
             if self.player.direction == Directions.N:
-                self.player.col_rect.move_ip(0, -2)
-                self.cam_world_pos_y -= 2
+                for o in self.map.getObjects():
+                    if o.x == tile_x*TILE_SIZE and o.y == (tile_y - 1) * TILE_SIZE:
+                        if "obtainable" in o.__dict__:
+                            text = text_box.TextBox((0,0), "Obtained " + o.name, (255,255,255), self.sprites)
             elif self.player.direction == Directions.S:
-                self.player.col_rect.move_ip(0, 2)
-                self.cam_world_pos_y += 2
-        elif self.player.moving:
-            self.player.animate = False
+                for o in self.map.getObjects():
+                    if o.x == tile_x and o.y == tile_y + 1:
+                        if "obtainable" in o:
+                            text = text_box.TextBox((0,0), "Obtained " + properties["name"], (255,255,255), self.sprites)
+            elif self.player.direction == Directions.E:
+                for o in self.map.getObjects():
+                    if o.x == tile_x - 1 and o.y == tile_y:
+                        if "obtainable" in o:
+                            text = text_box.TextBox((0,0), "Obtained " + properties["name"], (255,255,255), self.sprites)
+            elif self.player.direction == Directions.W:
+                for o in self.map.getObjects():
+                    if o.x == tile_x + 1 and o.y == tile_y:
+                        if "obtainable" in o:
+                            text = text_box.TextBox((0,0), "Obtained " + properties["name"], (255,255,255), self.sprites)
+        elif event.key == pl.K_t:
+            text = text_box.TextBox((0,0), "This is a textbox", (255,255,255), self.sprites)
+
+    def update_world(self, time):
+        if time - self._last_update > self._delay:
+            if self.cam_world_pos_x % 32 == 0 and self.cam_world_pos_y % 32 == 0 and self.player.moving:
+                self.check_collision(self.player.direction, 3) #TODO: remove hardcoding
+            elif self.cam_world_pos_x % 32 != 0:
+                if self.player.direction == Directions.W:
+                    self.player.col_rect.move_ip(-2, 0)
+                    self.cam_world_pos_x -= 2
+                elif self.player.direction == Directions.E:
+                    self.player.col_rect.move_ip(2, 0)
+                    self.cam_world_pos_x += 2
+
+            elif self.cam_world_pos_y % 32 != 0:
+                if self.player.direction == Directions.N:
+                    self.player.col_rect.move_ip(0, -2)
+                    self.cam_world_pos_y -= 2
+                elif self.player.direction == Directions.S:
+                    self.player.col_rect.move_ip(0, 2)
+                    self.cam_world_pos_y += 2
+            self._last_update = time
 
     def check_collision(self, facing, coll_layer):
         # find the tile location of the hero
@@ -126,15 +159,15 @@ class Overworld(cevent.CEvent):
         layer_data = self.map.getLayerData(coll_layer)
         for diry in (-1, 0 , 1):
             for dirx in (-1, 0, 1):
-                if self.map.getTileImage(tile_x + dirx, tile_y + diry, coll_layer) != 0: #I believe this is gid for meta collision
+                if self.map.getTileImage(tile_x + dirx, tile_y + diry, coll_layer) != 0: #TODO: remove hard coding #I believe this is gid for meta collision
                     tile_rects.append(pygame.rect.Rect((tile_x + dirx) * TILE_SIZE, (tile_y + diry) * TILE_SIZE, TILE_SIZE, TILE_SIZE))
-        
+
         if self.player.col_rect.move(step_x, 0).collidelist(tile_rects) > -1:
             step_x = 0
 
         if self.player.col_rect.move(0, step_y).collidelist(tile_rects) > -1:
             step_y = 0
-
+ 
         self.player.col_rect.move_ip(step_x, step_y)
         self.cam_world_pos_x += step_x
         self.cam_world_pos_y += step_y
@@ -146,3 +179,4 @@ class Overworld(cevent.CEvent):
         self.initialize()
 
 import battlefield
+import text_box
