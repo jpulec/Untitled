@@ -85,31 +85,33 @@ class Overworld(cevent.CEvent):
                 if type(sprite) == text_box.TextBox:
                     #so get rid of open textboxes
                     sprite.kill()
-            tile_x = int((self.player.col_rect.left) / TILE_SIZE)
-            tile_y = int((self.player.col_rect.top) / TILE_SIZE)
 
-            if self.player.direction == Directions.N:
-                for o in self.map.getObjects():
-                    if o.x == tile_x*TILE_SIZE and o.y == (tile_y - 1) * TILE_SIZE:
-                        if "obtainable" in o.__dict__:
-                            text = text_box.TextBox((0,0), "Obtained " + o.name, (255,255,255), self.sprites)
-            elif self.player.direction == Directions.S:
-                for o in self.map.getObjects():
-                    if o.x == tile_x and o.y == tile_y + 1:
-                        if "obtainable" in o:
-                            text = text_box.TextBox((0,0), "Obtained " + properties["name"], (255,255,255), self.sprites)
-            elif self.player.direction == Directions.E:
-                for o in self.map.getObjects():
-                    if o.x == tile_x - 1 and o.y == tile_y:
-                        if "obtainable" in o:
-                            text = text_box.TextBox((0,0), "Obtained " + properties["name"], (255,255,255), self.sprites)
-            elif self.player.direction == Directions.W:
-                for o in self.map.getObjects():
-                    if o.x == tile_x + 1 and o.y == tile_y:
-                        if "obtainable" in o:
-                            text = text_box.TextBox((0,0), "Obtained " + properties["name"], (255,255,255), self.sprites)
+            self.check_objects(self.player.direction)
+
         elif event.key == pl.K_t:
-            text = text_box.TextBox((0,0), "This is a textbox", (255,255,255), self.sprites)
+            pass
+            #text = text_box.TextBox((0,0), "This is a textbox", (255,255,255), self.sprites)
+
+    def object_handler(self, obj):
+        if "obtainable" in obj.__dict__:
+            text = text_box.TextBox((0,0), obj.obtainable, (255,255,255), self.sprites)
+        elif "usable" in obj.__dict__:
+            text = text_box.TextBox((0,0), obj.usable, (255,255,255), self.sprites)
+
+    def check_objects(self, direction):
+        tile_x = int((self.player.col_rect.left) / TILE_SIZE) * TILE_SIZE
+        tile_y = int((self.player.col_rect.top) / TILE_SIZE) * TILE_SIZE
+
+        for o in self.map.getObjects():
+            if o.x == tile_x and o.y == tile_y - TILE_SIZE and direction == Directions.N:
+                self.object_handler(o)
+            elif o.x == tile_x and o.y == tile_y + TILE_SIZE and direction == Directions.S:
+                self.object_handler(o)
+            elif o.x == tile_x - TILE_SIZE and o.y == tile_y and direction == Directions.E:
+                self.object_handler(o)
+            elif o.x == tile_x + TILE_SIZE and o.y == tile_y and direction == Directions.W:
+                self.object_handler(o)
+
 
     def update_world(self, time):
         if time - self._last_update > self._delay:
@@ -136,7 +138,6 @@ class Overworld(cevent.CEvent):
         # find the tile location of the hero
         tile_x = int((self.player.col_rect.left) / TILE_SIZE)
         tile_y = int((self.player.col_rect.top) / TILE_SIZE)
-
 
         step_x = 0
         step_y = 0
@@ -171,8 +172,6 @@ class Overworld(cevent.CEvent):
         self.player.col_rect.move_ip(step_x, step_y)
         self.cam_world_pos_x += step_x
         self.cam_world_pos_y += step_y
-
-
 
     def battle(self):
         self.__class__ = battlefield.Battlefield
