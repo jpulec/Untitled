@@ -11,7 +11,7 @@ class Battlefield(overworld.Overworld):
         self.selected = None
 
     def initialize(self):
-        self.cursor = Cursor(self.player.rect.copy(), "system", frame_count=4)
+        self.cursor = Cursor(self.player.rect.copy(), "cursor", frame_count=4)
         self.sprites.add(self.cursor)
 
     def on_key_down(self, event):
@@ -36,8 +36,8 @@ class Battlefield(overworld.Overworld):
                     self.map.tilelayers[0].data[(self.cursor.rect.top + self.cam_world_pos_y) / TILE_SIZE + 1][(self.cursor.rect.left + self.cam_world_pos_x) / TILE_SIZE - 1] = 111
                     self.map.tilelayers[1].data[(self.cursor.rect.top + self.cam_world_pos_y) / TILE_SIZE + 1][(self.cursor.rect.left + self.cam_world_pos_x) / TILE_SIZE - 1] = 111
                     print sprite
-            print "Fuck yea, some crazy black magic voodoo class shit is going on here"
-        
+
+
         elif event.key == pl.K_b:
             self.finished()
 

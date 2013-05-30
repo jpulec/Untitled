@@ -65,6 +65,8 @@ class ImageData(object):
         #        for x in range(0,4):
         #            self.sprite_rects[name+"_"+skin].append(pygame.rect.Rect(x*32,y*64,32,64))
         self.textures["textbox"] = self.sprite_sheet((32, 32), "images/textbox.png")
+        self.textures["cursor"] = self.sprite_sheet((32, 32), "images/system.png", clip=(128,32)) 
+        print len(self.textures["cursor"])
         system = "system.png"
         #self.load_texture("system", "images/" + system, -1)
         #for y in range(0,4):

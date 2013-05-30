@@ -18,8 +18,8 @@ class AnimatedSprite(pygame.sprite.Sprite):
     def update(self, t):
         if t - self._last_update > self._delay:
             self._frame += 1
-            if self._frame > self.frame_count:
-                self._frame = 1
+            if self._frame >= self.frame_count:
+                self._frame = 0
             self.image = IM.textures[self.name][self._frame]
             self._last_update = t
 
