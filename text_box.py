@@ -1,10 +1,24 @@
 import cevent
 import math
 import pygame
+import pygame.locals as pl
 import overworld
 from constants import *
 
-class TextBox(cevent.CEvent, pygame.sprite.Sprite):
+class TextBoxHandler(overworld.Overworld):
+    def __init__(self, *args, **kwargs):
+        super(TextBoxHandler, self).__init__(*args, **kwargs)
+        self.text_box = None
+
+    def initialize(self, *args, **kwargs):
+        self.text_box = TextBox(*args, **kwargs)
+
+    def on_key_down(self, event):
+        if event.key == pl.K_t:
+            self.sprites.remove(self.text_box)
+            self.__class__ = overworld.Overworld
+
+class TextBox(pygame.sprite.Sprite):
     def __init__(self, position, text, color, *args, **kwargs):
         super(TextBox, self).__init__(*args, **kwargs)
         self.text = text
@@ -49,5 +63,3 @@ class TextBox(cevent.CEvent, pygame.sprite.Sprite):
 
         surf.blit(self.font.render(self.text, True, self.color), self.border)
         self.image = surf
-
-

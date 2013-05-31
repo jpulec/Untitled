@@ -1,5 +1,5 @@
 #Global constant data
-import image_data
+import image_loader
 import display_info
 import pygame.time
 import utils
@@ -13,7 +13,7 @@ SCREEN_HEIGHT = 608
 
 DISPLAY = display_info.DisplayInfo(SCREEN_WIDTH, SCREEN_HEIGHT)
 DISPLAY.create_screen()
-IM = image_data.ImageData()
+IM = image_loader.ImageLoader()
 IM.setup()
 TIMER =  pygame.time.Clock()
 

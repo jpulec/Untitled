@@ -1,6 +1,6 @@
 import pygame
 import display_info
-import image_data
+import image_loader
 import player_data
 import overworld
 import sys

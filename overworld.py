@@ -41,8 +41,6 @@ class Overworld(cevent.CEvent):
                 if tile:
                     surface.blit(tile, (x*tw - self.cam_world_pos_x, y*th - self.cam_world_pos_y))
 
-
-
     def update(self):
         time = pygame.time.get_ticks()
         self.update_world(time)
@@ -81,22 +79,19 @@ class Overworld(cevent.CEvent):
             self.battle()
 
         elif event.key == pl.K_RETURN:
-            for sprite in self.sprites:
-                if type(sprite) == text_box.TextBox:
-                    #so get rid of open textboxes
-                    sprite.kill()
-
             self.check_objects(self.player.direction)
 
         elif event.key == pl.K_t:
-            pass
-            #text = text_box.TextBox((0,0), "This is a textbox", (255,255,255), self.sprites)
+            self.__class__ = text_box.TextBoxHandler
+            self.initialize((0,0), "This is a textbox", (255,255,255), self.sprites)
 
     def object_handler(self, obj):
         if "obtainable" in obj.__dict__:
-            text = text_box.TextBox((0,0), obj.obtainable, (255,255,255), self.sprites)
+            self.__class__ = text_box.TextBoxHandler
+            self.initialize((0,0), obj.obtainable, (255,255,255), self.sprites)
         elif "usable" in obj.__dict__:
-            text = text_box.TextBox((0,0), obj.usable, (255,255,255), self.sprites)
+            self.__class__ = text_box.TextBoxHandler
+            self.initialize((0,0), obj.usable, (255,255,255), self.sprites)
 
     def check_objects(self, direction):
         tile_x = int((self.player.col_rect.left) / TILE_SIZE) * TILE_SIZE
