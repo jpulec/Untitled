@@ -69,7 +69,12 @@ class Creature(AnimatedSprite):
         self.shit = []
         self.carryAbility = 0
 
-class Avatar(MovingSprite):
+class Attributes(object):
+    def __init__(self, *args, **kwargs):
+        super(Attributes, self).__init__(*args, **kwargs)
+        self.shit = {}
+
+class Avatar(Attributes, MovingSprite):
     def __init__(self, *args, **kwargs):
         super(Avatar, self).__init__(fps=10, *args, **kwargs)
         self.col_rect = pygame.Rect(DISPLAY.screen_width / 2 - TILE_SIZE / 2, DISPLAY.screen_height / 2 - TILE_SIZE / 2 + TILE_SIZE, TILE_SIZE, TILE_SIZE)

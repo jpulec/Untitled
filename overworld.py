@@ -78,20 +78,30 @@ class Overworld(cevent.CEvent):
         elif event.key == pl.K_b:
             self.battle()
 
+        elif event.key == pl.K_i:
+            self.__class__ = menu.MenuHandler
+            self.initialize(self.player.shit, (0,0), (255,255,255), self.sprites) 
+            self.menu.construct_box()
+
         elif event.key == pl.K_RETURN:
             self.check_objects(self.player.direction)
 
         elif event.key == pl.K_t:
             self.__class__ = text_box.TextBoxHandler
             self.initialize((0,0), "This is a textbox", (255,255,255), self.sprites)
+            self.text_box.construct_box()
 
     def object_handler(self, obj):
         if "obtainable" in obj.__dict__:
             self.__class__ = text_box.TextBoxHandler
-            self.initialize((0,0), obj.obtainable, (255,255,255), self.sprites)
+            self.initialize((0,0),  (255,255,255), self.sprites, text=obj.obtainable)
+            self.text_box.construct_box()
+            self.map.objectgroups[0].remove(obj)
+            self.player.shit[obj.name] = obj
         elif "usable" in obj.__dict__:
             self.__class__ = text_box.TextBoxHandler
             self.initialize((0,0), obj.usable, (255,255,255), self.sprites)
+            self.text_box.construct_box()
 
     def check_objects(self, direction):
         tile_x = int((self.player.col_rect.left) / TILE_SIZE) * TILE_SIZE
@@ -174,3 +184,4 @@ class Overworld(cevent.CEvent):
 
 import battlefield
 import text_box
+import menu

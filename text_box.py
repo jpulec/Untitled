@@ -14,20 +14,19 @@ class TextBoxHandler(overworld.Overworld):
         self.text_box = TextBox(*args, **kwargs)
 
     def on_key_down(self, event):
-        if event.key == pl.K_t:
+        if event.key == pl.K_RETURN:
             self.sprites.remove(self.text_box)
             self.__class__ = overworld.Overworld
 
 class TextBox(pygame.sprite.Sprite):
-    def __init__(self, position, text, color, *args, **kwargs):
+    def __init__(self, position, color, *args, **kwargs):
+        self.text = kwargs.pop("text", "")
         super(TextBox, self).__init__(*args, **kwargs)
-        self.text = text
         self.rect = position
         self.image = IM.textures["textbox"]
         self.font = pygame.font.Font(None, 24)
         self.color = color
         self.border = (7,7)
-        self.construct_box()
 
     def construct_box(self):
         #this will be constructed box

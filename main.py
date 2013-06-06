@@ -13,7 +13,7 @@ class Main(object):
     def __init__(self):
         super(Main, self).__init__()
         pygame.init()
-        self.party = party.Party()
+        #self.party = party.Party()
         pygame.font.init()
         pygame.key.set_repeat(75, 75)
         self.init_display()
@@ -46,7 +46,7 @@ class Main(object):
     def init_world(self):
         self.overworld = overworld.Overworld("maps/Bank_Inside.tmx")
         self.context = self.overworld
-        self.party.team["Miles"] = player_data.PlayerData("Miles_regular")
+        #self.party.team["Miles"] = player_data.PlayerData("Miles_regular")
 
 
 if __name__ == "__main__":
