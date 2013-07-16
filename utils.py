@@ -1,6 +1,8 @@
 import pygame
 
+
 class SourceRectGroup(pygame.sprite.Group):
+
     def __init__(self, *args, **kwargs):
         super(SourceRectGroup, self).__init__(*args, **kwargs)
 
@@ -11,5 +13,6 @@ class SourceRectGroup(pygame.sprite.Group):
             if hasattr(spr, "draw"):
                 self.spritedict[spr] = spr.draw()
             else:
-                self.spritedict[spr] = surface_blit(spr.image, spr.rect, spr.src_rect)
+                self.spritedict[spr] = surface_blit(
+                    spr.image, spr.rect, spr.src_rect)
         self.lostsprites = []

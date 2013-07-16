@@ -9,7 +9,9 @@ import party
 import battlefield
 from constants import *
 
+
 class Main(object):
+
     def __init__(self):
         super(Main, self).__init__()
         pygame.init()
@@ -26,7 +28,6 @@ class Main(object):
         DISPLAY.create_screen()
         DISPLAY.screen.fill((0, 0, 0))
 
-
     def main_loop(self):
         self.init_world()
         while(True):
@@ -40,8 +41,10 @@ class Main(object):
 
     def game_draw(self):
         if self.debug:
-            DISPLAY.screen.blit(self.font.render(str(TIMER.get_fps()), 0, (255,255,255)), (24,24))
-            DISPLAY.screen.blit(self.font.render(str(self.context.cam_world_pos_x) + " " + str(self.context.cam_world_pos_y), 0, (255,255,255)), (600, 24))
+            DISPLAY.screen.blit(
+                self.font.render(str(TIMER.get_fps()), 0, (255, 255, 255)), (24, 24))
+            DISPLAY.screen.blit(self.font.render(str(self.context.cam_world_pos_x) + " " + str(
+                self.context.cam_world_pos_y), 0, (255, 255, 255)), (600, 24))
 
     def init_world(self):
         self.overworld = overworld.Overworld("maps/Bank_Inside.tmx")

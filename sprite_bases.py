@@ -1,7 +1,9 @@
 import pygame
 from constants import *
 
+
 class AnimatedSprite(pygame.sprite.Sprite):
+
     def __init__(self, name, fps=10, frame=0, frame_count=4, *args, **kwargs):
         super(AnimatedSprite, self).__init__(*args, **kwargs)
         self.name = name
@@ -23,12 +25,14 @@ class AnimatedSprite(pygame.sprite.Sprite):
             self.image = IM.textures[self.name][self._frame]
             self._last_update = t
 
+
 class MovingSprite(pygame.sprite.Sprite):
+
     def __init__(self, name, *args, **kwargs):
         fps = kwargs.pop('fps', 60)
         super(MovingSprite, self).__init__(*args, **kwargs)
         self.name = name
-        self.image = IM.textures[name][0] 
+        self.image = IM.textures[name][0]
         self._frame = 0
         #self.src_rect = IM.sprite_rects[self.name][self._frame]
         self.col_rect = None
@@ -48,34 +52,63 @@ class MovingSprite(pygame.sprite.Sprite):
                 self._frame += 2
                 if self._frame % 3 == 0:
                     self.moving = False
-                if self._frame  >= 8:
+                if self._frame >= 8:
                     self._frame = 0
                     if not self.moving:
                         self.animate = False
-                self.image = IM.textures[self.name][(self._frame / 2) + self.direction]
+                self.image = IM.textures[self.name][
+                    (self._frame / 2) + self.direction]
                 self._last_update = t
         else:
             self._frame = 0
-            self.image = IM.textures[self.name][(self._frame / 2) + self.direction]
+            self.image = IM.textures[self.name][
+                (self._frame / 2) + self.direction]
             self._last_update = t
  #       print str((self._frame / 2) + self.direction)
   #      print self.name
        # print len(IM.textures[self.name])
 
+
 class Creature(AnimatedSprite):
+
     def __init__(self, name, *args, **kwargs):
         super(Creature, self).__init__(name, *args, **kwargs)
         self.HP = 0
         self.shit = []
         self.carryAbility = 0
 
+
 class Attributes(object):
+
     def __init__(self, *args, **kwargs):
         super(Attributes, self).__init__(*args, **kwargs)
         self.shit = {}
 
+
 class Avatar(Attributes, MovingSprite):
+
     def __init__(self, *args, **kwargs):
         super(Avatar, self).__init__(fps=10, *args, **kwargs)
-        self.col_rect = pygame.Rect(DISPLAY.screen_width / 2 - TILE_SIZE / 2, DISPLAY.screen_height / 2 - TILE_SIZE / 2 + TILE_SIZE, TILE_SIZE, TILE_SIZE)
-        self.rect = pygame.Rect(DISPLAY.screen_width / 2 - TILE_SIZE / 2, DISPLAY.screen_height / 2 - TILE_SIZE / 2, TILE_SIZE, TILE_SIZE)
+        self.col_rect = pygame.Rect(
+            DISPLAY.screen_width /
+            2 -
+            TILE_SIZE /
+            2,
+            DISPLAY.screen_height /
+            2 -
+            TILE_SIZE /
+            2 +
+            TILE_SIZE,
+            TILE_SIZE,
+            TILE_SIZE)
+        self.rect = pygame.Rect(
+            DISPLAY.screen_width /
+            2 -
+            TILE_SIZE /
+            2,
+            DISPLAY.screen_height /
+            2 -
+            TILE_SIZE /
+            2,
+            TILE_SIZE,
+            TILE_SIZE)

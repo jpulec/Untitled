@@ -177,14 +177,12 @@ from utils import types
 from constants import *
 
 
-
 def load_tmx(filename, *args, **kwargs):
     # for .14 compatibility
     from pytmx import TiledMap
 
     tiledmap = TiledMap(filename)
     return tiledmap
-
 
 
 def pygame_convert(original, colorkey, force_colorkey, pixelalpha):
@@ -211,7 +209,7 @@ def pygame_convert(original, colorkey, force_colorkey, pixelalpha):
     elif force_colorkey:
         tile = Surface(tile_size)
         tile.fill(force_colorkey)
-        tile.blit(original, (0,0))
+        tile.blit(original, (0, 0))
         tile.set_colorkey(force_colorkey, RLEACCEL)
 
     # there are transparent pixels, and tiled set a colorkey
@@ -259,14 +257,14 @@ def load_images_pygame(tmxdata, mapping, *args, **kwargs):
     """
     from itertools import product
     from pygame import Surface
-    import pygame, os
-
+    import pygame
+    import os
 
     def handle_transformation(tile, flags):
         if flags:
             fx = flags & TRANS_FLIPX == TRANS_FLIPX
             fy = flags & TRANS_FLIPY == TRANS_FLIPY
-            r  = flags & TRANS_ROT == TRANS_ROT
+            r = flags & TRANS_ROT == TRANS_ROT
 
             if r:
                 # not sure why the flip is required...but it is.
@@ -279,15 +277,15 @@ def load_images_pygame(tmxdata, mapping, *args, **kwargs):
             elif fx or fy:
                 newtile = pygame.transform.flip(tile, fx, fy)
 
-            # preserve any flags that may have been lost after the transformation
+            # preserve any flags that may have been lost after the
+            # transformation
             return newtile
-            #return newtile.convert(tile)
+            # return newtile.convert(tile)
 
         else:
             return tile
 
-
-    pixelalpha     = kwargs.get("pixelalpha", False)
+    pixelalpha = kwargs.get("pixelalpha", False)
     force_colorkey = kwargs.get("force_colorkey", False)
     force_bitdepth = kwargs.get("depth", False)
 
@@ -296,7 +294,7 @@ def load_images_pygame(tmxdata, mapping, *args, **kwargs):
             force_colorkey = pygame.Color(*force_colorkey)
         except:
             msg = "Cannot understand color: {0}"
-            raise Exception, msg.format(force_colorkey)
+            raise Exception(msg.format(force_colorkey))
 
     tmxdata.images = [0] * tmxdata.maxgid
 
@@ -320,23 +318,30 @@ def load_images_pygame(tmxdata, mapping, *args, **kwargs):
 
         # some tileset images may be slightly larger than the tile area
         # ie: may include a banner, copyright, ect.  this compensates for that
-        width = ((int((w-t.margin*2) + t.spacing) / tilewidth) * tilewidth) - t.spacing
-        height = ((int((h-t.margin*2) + t.spacing) / tileheight) * tileheight) - t.spacing
+        width = ((int((w - t.margin * 2) + t.spacing) / tilewidth) * tilewidth) - \
+            t.spacing
+        height = (
+            (int((h - t.margin * 2) + t.spacing) / tileheight) * tileheight) - t.spacing
 
         # using product avoids the overhead of nested loops
-        p = product(xrange(t.margin, height+t.margin, tileheight),
-                    xrange(t.margin, width+t.margin, tilewidth))
+        p = product(xrange(t.margin, height + t.margin, tileheight),
+                    xrange(t.margin, width + t.margin, tilewidth))
 
         for (y, x) in p:
             real_gid += 1
             gids = tmxdata.mapGID(real_gid)
-            if gids == []: continue
+            if gids == []:
+                continue
 
-            original = image.subsurface(((x,y), tile_size))
+            original = image.subsurface(((x, y), tile_size))
 
             for gid, flags in gids:
                 tile = handle_transformation(original, flags)
-                tile = pygame_convert(tile, colorkey, force_colorkey, pixelalpha)
+                tile = pygame_convert(
+                    tile,
+                    colorkey,
+                    force_colorkey,
+                    pixelalpha)
                 tmxdata.images[gid] = tile
 
 
@@ -345,6 +350,3 @@ def load_pygame(filename, *args, **kwargs):
     load_images_pygame(tmxdata, None, *args, **kwargs)
 
     return tmxdata
-
-
-

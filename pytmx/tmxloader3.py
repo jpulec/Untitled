@@ -71,14 +71,16 @@ FLIP_Y = 2
 
 
 # Tiled gid flags
-GID_FLIP_X = 1<<31
-GID_FLIP_Y = 1<<30
+GID_FLIP_X = 1 << 31
+GID_FLIP_Y = 1 << 30
 
 
 class TiledElement(object):
     pass
 
+
 class TiledMap(TiledElement):
+
     """
     not really useful unless "loaded"  ie: don't instance directly.
     see the pygame loader for inspiration
@@ -86,11 +88,13 @@ class TiledMap(TiledElement):
 
     def __init__(self):
         TiledElement.__init__(self)
-        self.layers = []            # list of all layer types (tile layers + object layers)
+        self.layers = []
+            # list of all layer types (tile layers + object layers)
         self.tilesets = []          # list of TiledTileset objects
-        self.tilelayers   = []      # list of TiledLayer objects
+        self.tilelayers = []      # list of TiledLayer objects
         self.objectgroups = []      # list of TiledObjectGroup objects
-        self.tile_properties = {}   # dict of tiles that have additional metadata (properties)
+        self.tile_properties = {}
+            # dict of tiles that have additional metadata (properties)
         self.filename = None
 
         # this is a work around to tiled's strange way of storing gid's
@@ -115,14 +119,16 @@ class TiledMap(TiledElement):
         try:
             gid = self.tilelayers[layer].data[y][x]
         except (IndexError, ValueError):
-            msg = "Coords: ({0},{1}) in layer {2} is invalid.".format(x, y, layer)
+            msg = "Coords: ({0},{1}) in layer {2} is invalid.".format(
+                x, y, layer)
             raise Exception(msg)
 
         else:
             try:
                 return self.images[gid]
             except (IndexError, ValueError):
-                msg = "Coords: ({0},{1}) in layer {2} has invalid GID: {3}/{4}.".format(x, y, layer, gid, len(self.images))
+                msg = "Coords: ({0},{1}) in layer {2} has invalid GID: {3}/{4}.".format(
+                    x, y, layer, gid, len(self.images))
                 raise Exception(msg)
 
     def getTileGID(self, x, y, layer):
@@ -134,7 +140,8 @@ class TiledMap(TiledElement):
         try:
             return self.tilelayers[layer].data[y][x]
         except (IndexError, ValueError):
-            msg = "Coords: ({0},{1}) in layer {2} is invalid.".format(x, y, layer)
+            msg = "Coords: ({0},{1}) in layer {2} is invalid.".format(
+                x, y, layer)
             raise Exception(msg)
 
     def getDrawOrder(self):
@@ -164,7 +171,7 @@ class TiledMap(TiledElement):
         Return iterator all of the objects associated with this map
         """
 
-        return chain(*[ i.objects for i in self.objectgroups ])
+        return chain(*[i.objects for i in self.objectgroups])
 
     def getTileProperties(self, x, y, layer):
         """
@@ -177,14 +184,16 @@ class TiledMap(TiledElement):
         try:
             gid = self.tilelayers[layer].data[y][x]
         except (IndexError, ValueError):
-            msg = "Coords: ({0},{1}) in layer {2} is invalid.".format(x, y, layer)
+            msg = "Coords: ({0},{1}) in layer {2} is invalid.".format(
+                x, y, layer)
             raise Exception(msg)
 
         else:
             try:
                 return self.tile_properties[gid]
             except (IndexError, ValueError):
-                msg = "Coords: ({0},{1}) in layer {2} has invaid GID: {3}/{4}.".format(x, y, layer, gid, len(self.images))
+                msg = "Coords: ({0},{1}) in layer {2} has invaid GID: {3}/{4}.".format(
+                    x, y, layer, gid, len(self.images))
                 raise Exception(msg)
 
     def getTilePropertiesByGID(self, gid):
@@ -195,7 +204,9 @@ class TiledMap(TiledElement):
 
 # the following classes get their attributes filled in with the loader
 
+
 class TiledTileset(TiledElement):
+
     def __init__(self):
         TiledElement.__init__(self)
 
@@ -208,7 +219,9 @@ class TiledTileset(TiledElement):
         self.spacing = 0
         self.margin = 0
 
+
 class TiledLayer(TiledElement):
+
     def __init__(self):
         TiledElement.__init__(self)
         self.data = None
@@ -218,13 +231,16 @@ class TiledLayer(TiledElement):
         self.opacity = 1.0
         self.visible = 1
 
+
 class TiledObjectGroup(TiledElement):
+
     def __init__(self):
         TiledElement.__init__(self)
         self.objects = []
 
         # defaults from the specification
         self.name = None
+
 
 class TiledObject(TiledElement):
     __slots__ = ['name', 'type', 'x', 'y', 'width', 'height', 'gid']
@@ -254,7 +270,8 @@ def load_tmx(filename):
     from itertools import tee, islice, chain
     from collections import defaultdict
     from struct import unpack
-    import array, os
+    import array
+    import os
 
     # used to change the unicode string returned from minidom to
     # proper python variable types.
@@ -307,7 +324,8 @@ def load_tmx(filename):
                     # the "properties" from tiled's tmx have an annoying
                     # quality that "name" and "value" is included as part of it.
                     # so we mangle it to get that stuff out.
-                    d.update(dict(pairwise([ str(i.value) for i in list(subnode.attributes.values()) ])))
+                    d.update(
+                        dict(pairwise([str(i.value) for i in list(subnode.attributes.values())])))
 
         return d
 
@@ -333,14 +351,14 @@ def load_tmx(filename):
         the values into an object's dictionary
         """
 
-        [ setattr(obj, k, v) for k,v in list(get_properties(node).items()) ]
+        [setattr(obj, k, v) for k, v in list(get_properties(node).items())]
 
     def get_attributes(node):
         """
         get the attributes from a node and fix them to the correct type
         """
 
-        d = defaultdict(lambda:None)
+        d = defaultdict(lambda: None)
 
         for k, v in list(node.attributes.items()):
             k = str(k)
@@ -353,12 +371,13 @@ def load_tmx(filename):
         # as of 0.7.0 it determines if the tile should be flipped when rendered
 
         flags = 0
-        if raw_gid & GID_FLIP_X == GID_FLIP_X: flags += FLIP_X
-        if raw_gid & GID_FLIP_Y == GID_FLIP_Y: flags += FLIP_Y
+        if raw_gid & GID_FLIP_X == GID_FLIP_X:
+            flags += FLIP_X
+        if raw_gid & GID_FLIP_Y == GID_FLIP_Y:
+            flags += FLIP_Y
         gid = raw_gid & ~(GID_FLIP_X | GID_FLIP_Y)
 
         return gid, flags
-
 
     def parse_map(node):
         """
@@ -387,7 +406,6 @@ def load_tmx(filename):
 
         return tiledmap
 
-
     def parse_tileset(node, firstgid=None):
         """
         parse a tileset element and return a tileset object and properties for tiles as a dict
@@ -397,7 +415,7 @@ def load_tmx(filename):
         set_properties(tileset, node)
         tiles = {}
 
-        if firstgid != None:
+        if firstgid is not None:
             tileset.firstgid = firstgid
 
         # since tile objects probably don't have a lot of metadata,
@@ -413,8 +431,11 @@ def load_tmx(filename):
         if hasattr(tileset, "source"):
             if tileset.source[-4:].lower() == ".tsx":
                 try:
-                    # we need to mangle the path some because tiled stores relative paths
-                    path = os.path.join(os.path.dirname(filename), tileset.source)
+                    # we need to mangle the path some because tiled stores
+                    # relative paths
+                    path = os.path.join(
+                        os.path.dirname(filename),
+                        tileset.source)
                     tsx = parse(path)
                 except IOError:
                     raise IOError("Cannot load external tileset: " + path)
@@ -422,7 +443,9 @@ def load_tmx(filename):
                 tileset_node = tsx.getElementsByTagName("tileset")[0]
                 tileset, tiles = parse_tileset(tileset_node, tileset.firstgid)
             else:
-                raise Exception("Found external tileset, but cannot handle type: " + tileset.source)
+                raise Exception(
+                    "Found external tileset, but cannot handle type: " +
+                    tileset.source)
 
         # if we have an "image" tag, process it here
         try:
@@ -441,7 +464,6 @@ def load_tmx(filename):
             tileset.lastgid = tileset.firstgid + x + y
 
         return tileset, tiles
-
 
     def parse_layer(tilesets, node):
         """
@@ -466,10 +488,13 @@ def load_tmx(filename):
             data = b64decode(bytes(data_node.lastChild.nodeValue, 'ascii'))
 
         elif attr["encoding"] == "csv":
-            next_gid = map(int, "".join([line.strip() for line in data_node.lastChild.nodeValue]).split(","))
+            next_gid = map(
+                int,
+                "".join([line.strip() for line in data_node.lastChild.nodeValue]).split(","))
 
         elif not attr["encoding"] is None:
-            raise Exception("TMX encoding type: " + str(attr["encoding"]) + " is not supported.")
+            raise Exception("TMX encoding type: " + str(
+                attr["encoding"]) + " is not supported.")
 
         if attr["compression"] == "gzip":
             from io import BytesIO
@@ -478,7 +503,8 @@ def load_tmx(filename):
                 data = fh.read()
 
         elif not attr["compression"] is None:
-            raise Exception("TMX compression type: " + str(attr["compression"]) + " is not supported.")
+            raise Exception("TMX compression type: " + str(
+                attr["compression"]) + " is not supported.")
 
         # if data is None, then it was not decoded or decompressed, so
         # we assume here that it is going to be a bunch of tile elements
@@ -491,24 +517,26 @@ def load_tmx(filename):
 
         elif not data is None:
             # cast the data as a list of 32-bit integers
-            def u(i): return unpack("<L", bytes(i))[0]
+            def u(i):
+                return unpack("<L", bytes(i))[0]
             next_gid = map(u, group(data, 4))
 
-        gids = [ i.firstgid for i in tilesets ]
+        gids = [i.firstgid for i in tilesets]
 
         # fill up our 2D array of gids.
         for y in range(layer.height):
 
-            # store as 16-bit ints, since we will never use enough tiles to fill a 32-bit int
+            # store as 16-bit ints, since we will never use enough tiles to
+            # fill a 32-bit int
             layer.data.append(array.array("H"))
 
             for x in range(layer.width):
                 gid, flags = decode_gid(next(next_gid))
-                if not flags == 0: layer.flipped_tiles.append((x, y, gid, flags))
+                if not flags == 0:
+                    layer.flipped_tiles.append((x, y, gid, flags))
                 layer.data[y].append(gid)
 
         return layer
-
 
     def parse_objectgroup(node):
         """
@@ -525,10 +553,9 @@ def load_tmx(filename):
 
         return objgroup
 
-
     # open and read our TMX (which is really just xml)
     dom = parse(filename)
-    map_node =  dom.getElementsByTagName("map")[0]
+    map_node = dom.getElementsByTagName("map")[0]
     return parse_map(map_node)
 
 
@@ -538,7 +565,8 @@ def load_pygame(filename):
     """
 
     from pygame import Surface
-    import pygame, os
+    import pygame
+    import os
 
     tiledmap = load_tmx(filename)
 
@@ -546,8 +574,9 @@ def load_pygame(filename):
     # mostly this is a problem in the blank areas of a tilemap
     cache = {}
 
-    # just a precaution to make sure tileset images are added in the correct order
-    for firstgid, t in sorted([ (t.firstgid, t) for t in tiledmap.tilesets ]):
+    # just a precaution to make sure tileset images are added in the correct
+    # order
+    for firstgid, t in sorted([(t.firstgid, t) for t in tiledmap.tilesets]):
         path = os.path.join(os.path.dirname(tiledmap.filename), t.source)
 
         image = pygame.image.load(path)
@@ -561,16 +590,18 @@ def load_pygame(filename):
         for y in range(0, int(h / t.tileheight) * t.tileheight, t.tileheight):
             for x in range(0, int(w / t.tilewidth) * t.tilewidth, t.tilewidth):
 
-                # somewhat handle transparency, though colorkey handling is not tested
+                # somewhat handle transparency, though colorkey handling is not
+                # tested
                 if t.trans is None:
                     tile = Surface(tile_size, pygame.SRCALPHA)
                 else:
                     tile = Surface(tile_size)
 
                 # blit the smaller portion onto a new image from the larger one
-                tile.blit(image, (0,0), ((x, y), tile_size))
+                tile.blit(image, (0, 0), ((x, y), tile_size))
 
-                # make a unique id for this image, not sure if this is the best way, but it works
+                # make a unique id for this image, not sure if this is the best
+                # way, but it works
                 key = pygame.image.tostring(tile, "RGBA")
 
                 # make sure we don't have a duplicate tile

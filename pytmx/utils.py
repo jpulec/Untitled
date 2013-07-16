@@ -4,16 +4,14 @@ from collections import defaultdict
 from constants import *
 
 
-
 """
 Various code that doesn't really fit anywhere else
 """
 
 
 def read_points(text):
-    return [ tuple(map(lambda x: int(x), i.split(',')))
-         for i in text.split() ]
-
+    return [tuple(map(lambda x: int(x), i.split(',')))
+            for i in text.split()]
 
 
 def parse_properties(node):
@@ -39,9 +37,12 @@ def decode_gid(raw_gid):
     # as of 0.8.0 bit 30 determines if GID is rotated
 
     flags = 0
-    if raw_gid & GID_TRANS_FLIPX == GID_TRANS_FLIPX: flags += TRANS_FLIPX
-    if raw_gid & GID_TRANS_FLIPY == GID_TRANS_FLIPY: flags += TRANS_FLIPY
-    if raw_gid & GID_TRANS_ROT == GID_TRANS_ROT: flags += TRANS_ROT
+    if raw_gid & GID_TRANS_FLIPX == GID_TRANS_FLIPX:
+        flags += TRANS_FLIPX
+    if raw_gid & GID_TRANS_FLIPY == GID_TRANS_FLIPY:
+        flags += TRANS_FLIPY
+    if raw_gid & GID_TRANS_ROT == GID_TRANS_ROT:
+        flags += TRANS_ROT
     gid = raw_gid & ~(GID_TRANS_FLIPX | GID_TRANS_FLIPY | GID_TRANS_ROT)
 
     return gid, flags
@@ -56,10 +57,14 @@ def handle_bool(text):
 
     try:
         text = str(text).lower()
-        if text == "true":   return True
-        if text == "yes":    return True
-        if text == "false":  return False
-        if text == "no":     return False
+        if text == "true":
+            return True
+        if text == "yes":
+            return True
+        if text == "false":
+            return False
+        if text == "no":
+            return False
     except:
         pass
 
@@ -121,18 +126,18 @@ def buildDistributionRects(tmxmap, layer, tileset=None, real_gid=None):
             tileset = tmxmap.tilesets[tileset]
         except IndexError:
             msg = "Tileset #{0} not found in map {1}."
-            raise IndexError, msg.format(tileset, tmxmap)
+            raise IndexError(msg.format(tileset, tmxmap))
 
     elif isinstance(tileset, str):
         try:
-            tileset = [ t for t in tmxmap.tilesets if t.name == tileset ].pop()
+            tileset = [t for t in tmxmap.tilesets if t.name == tileset].pop()
         except IndexError:
             msg = "Tileset \"{0}\" not found in map {1}."
-            raise ValueError, msg.format(tileset, tmxmap)
+            raise ValueError(msg.format(tileset, tmxmap))
 
     elif tileset:
         msg = "Tileset must be either a int or string. got: {0}"
-        raise ValueError, msg.format(type(tileset))
+        raise ValueError(msg.format(type(tileset)))
 
     gid = None
     if real_gid:
@@ -140,24 +145,23 @@ def buildDistributionRects(tmxmap, layer, tileset=None, real_gid=None):
             gid, flags = tmxmap.mapGID(real_gid)[0]
         except IndexError:
             msg = "GID #{0} not found"
-            raise ValueError, msg.format(real_gid)
-
+            raise ValueError(msg.format(real_gid))
 
     if isinstance(layer, int):
         layer_data = tmxmap.getLayerData(layer).data
     elif isinstance(layer, str):
         try:
-            layer = [ l for l in tmxmap.tilelayers if l.name == layer ].pop()
+            layer = [l for l in tmxmap.tilelayers if l.name == layer].pop()
             layer_data = layer.data
         except IndexError:
             msg = "Layer \"{0}\" not found in map {1}."
-            raise ValueError, msg.format(layer, tmxmap)
+            raise ValueError(msg.format(layer, tmxmap))
 
     p = product(xrange(tmxmap.width), xrange(tmxmap.height))
     if gid:
-        points = [ (x,y) for (x,y) in p if layer_data[y][x] == gid ]
+        points = [(x, y) for (x, y) in p if layer_data[y][x] == gid]
     else:
-        points = [ (x,y) for (x,y) in p if layer_data[y][x] ]
+        points = [(x, y) for (x, y) in p if layer_data[y][x]]
 
     rects = simplify(points, tmxmap.tilewidth, tmxmap.tileheight)
     return rects
@@ -208,19 +212,19 @@ def simplify(all_points, tilewidth, tileheight):
     """
 
     def pick_rect(points, rects):
-        ox, oy = sorted([ (sum(p), p) for p in points ])[0][1]
+        ox, oy = sorted([(sum(p), p) for p in points])[0][1]
         x = ox
         y = oy
         ex = None
 
-        while 1:
+        while True:
             x += 1
             if not (x, y) in points:
                 if ex is None:
                     ex = x - 1
 
-                if ((ox, y+1) in points):
-                    if x == ex + 1 :
+                if ((ox, y + 1) in points):
+                    if x == ex + 1:
                         y += 1
                         x = ox
 
@@ -228,17 +232,18 @@ def simplify(all_points, tilewidth, tileheight):
                         y -= 1
                         break
                 else:
-                    if x <= ex: y-= 1
+                    if x <= ex:
+                        y -= 1
                     break
 
-        c_rect = Rect(ox*tilewidth,oy*tileheight,\
-                     (ex-ox+1)*tilewidth,(y-oy+1)*tileheight)
+        c_rect = Rect(ox * tilewidth, oy * tileheight,
+                     (ex - ox + 1) * tilewidth, (y - oy + 1) * tileheight)
 
         rects.append(c_rect)
 
-        rect = Rect(ox,oy,ex-ox+1,y-oy+1)
-        kill = [ p for p in points if rect.collidepoint(p) ]
-        [ points.remove(i) for i in kill ]
+        rect = Rect(ox, oy, ex - ox + 1, y - oy + 1)
+        kill = [p for p in points if rect.collidepoint(p)]
+        [points.remove(i) for i in kill]
 
         if points:
             pick_rect(points, rects)
@@ -248,4 +253,3 @@ def simplify(all_points, tilewidth, tileheight):
         pick_rect(all_points, rect_list)
 
     return rect_list
-
